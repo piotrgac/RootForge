@@ -1,7 +1,7 @@
 <script>
   import { invoke } from '@tauri-apps/api/core';
   import { onMount } from 'svelte';
-  import { getCategoryStats } from '$lib/categories';
+  import { getCategoryStats, getCategoryInfo } from '$lib/categories';
 
   let data = $state(null);
   let loading = $state(true);
@@ -42,6 +42,23 @@
     return sessions.filter(s => s.date === today);
   });
   let todayMinutes = $derived(todaySessions.reduce((acc, s) => acc + s.duration_minutes, 0));
+
+  function computeCategoryPerformance(d) {
+    const quizzes = d.quizzes || [];
+    const results = d.quiz_results || [];
+    const perf = {};
+    for (const r of results) {
+      const q = quizzes.find(x => x.id === r.quiz_id);
+      const cat = q ? q.category : 'unknown';
+      if (!perf[cat]) perf[cat] = { name: cat, color: '#38bdf8', total: 0, correct: 0 };
+      perf[cat].total++;
+      if (r.correct) perf[cat].correct++;
+    }
+    return Object.entries(perf).map(([key, c]) => {
+      const inf = getCategoryInfo(key);
+      return { ...c, name: inf.name, color: inf.color, accuracy: c.total > 0 ? Math.round(c.correct / c.total * 100) : 0 };
+    });
+  }
 </script>
 
 <div class="dashboard">
@@ -115,6 +132,42 @@
         </div>
       </div>
     </div>
+
+    {#if data?.quiz_results?.length}
+      {@const catPerf = computeCategoryPerformance(data)}
+      {@const weakAreas = catPerf.filter(c => c.accuracy < 60).sort((a, b) => a.accuracy - b.accuracy)}
+      {#if weakAreas.length > 0}
+        <div class="weak-section">
+          <h2>⚠️ Obszary do poprawy</h2>
+          <p class="weak-subtitle">Najsłabiej wypadasz w tych kategoriach – skup się na nich:</p>
+          <div class="weak-grid">
+            {#each weakAreas as area}
+              <div class="weak-card">
+                <div class="weak-header">
+                  <span class="weak-dot" style="background: {area.color}"></span>
+                  <span class="weak-name">{area.name}</span>
+                  <span class="weak-pct">{area.accuracy}%</span>
+                </div>
+                <div class="weak-bar-bg">
+                  <div class="weak-bar-fill" style="width: {area.accuracy}%; background: {area.color}"></div>
+                </div>
+                <div class="weak-count">{area.correct}/{area.total} poprawnych</div>
+                <div class="weak-actions">
+                  <a href="/challenges" class="weak-link">📖 Wyzwania</a>
+                  <a href="/quiz" class="weak-link">🧠 Quiz</a>
+                </div>
+              </div>
+            {/each}
+          </div>
+        </div>
+      {:else if catPerf.length > 0}
+        <div class="weak-section">
+          <h2>🎉 Wszystkie kategorie opanowane!</h2>
+          <p class="weak-subtitle">Świetna robota. Spróbuj Speed Challenge, aby utrwalić wiedzę.</p>
+          <a href="/speed" class="btn-primary">⚡ Speed Challenge</a>
+        </div>
+      {/if}
+    {/if}
 
     {#if data?.achievements?.length}
       <div class="achievements-section">
@@ -232,6 +285,22 @@
     font-size: 12px;
     color: #64748b;
   }
+
+  .weak-section { margin-bottom: 28px; }
+  .weak-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; color: #e2e8f0; }
+  .weak-subtitle { font-size: 13px; color: #64748b; margin-bottom: 12px; }
+  .weak-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .weak-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; }
+  .weak-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .weak-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .weak-name { flex: 1; font-weight: 600; color: #e2e8f0; font-size: 13px; }
+  .weak-pct { font-size: 16px; font-weight: 700; color: #ef4444; }
+  .weak-bar-bg { height: 6px; background: #334155; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+  .weak-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .weak-count { font-size: 11px; color: #64748b; margin-bottom: 8px; }
+  .weak-actions { display: flex; gap: 6px; }
+  .weak-link { font-size: 11px; font-weight: 600; color: #38bdf8; text-decoration: none; padding: 3px 8px; background: #0ea5e920; border-radius: 4px; }
+  .weak-link:hover { background: #0ea5e930; }
 
   .achievements-section { margin-bottom: 28px; }
   .achievements-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #e2e8f0; }

@@ -15,12 +15,32 @@ export interface CategoryInfo {
   color: string;
 }
 
+export interface Mission {
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
+  steps: number[];
+  completed: boolean;
+  xp_reward: number;
+  category: string | null;
+}
+
+export interface QuizResult {
+  quiz_id: number;
+  correct: boolean;
+  confidence?: number | null;
+}
+
 export interface CategoryStat {
   name: string;
   color: string;
   total: number;
   done: number;
   percent: number;
+  correct?: number;
+  wrong?: number;
+  accuracy?: number;
 }
 
 type CategoryMap = Record<string, CategoryInfo>;

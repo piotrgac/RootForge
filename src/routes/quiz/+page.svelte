@@ -23,6 +23,7 @@
   let reviewWrong = $state(null);
   let reviewIdx = $state(0);
   let showingHint = $state(false);
+  let confidence = $state(3);
 
   let categories = $derived(Object.keys(categoryInfo));
   let stages = $derived.by(() => {
@@ -52,6 +53,7 @@
     const [, correct, expl] = await invoke('submit_quiz', {
       id: currentQuiz.id,
       answer: selectedAnswer,
+      confidence,
     });
     isCorrect = correct;
     explanation = expl;
@@ -64,7 +66,7 @@
       sessionWrong.push(currentQuiz.id);
       const existing = quizResults.find(r => r.quiz_id === currentQuiz.id);
       if (existing) existing.correct = false;
-      else quizResults.push({ quiz_id: currentQuiz.id, correct: false });
+      else quizResults.push({ quiz_id: currentQuiz.id, correct: false, confidence });
     }
   }
 
@@ -155,6 +157,17 @@
       </div>
 
       {#if !showResult}
+        <div class="confidence-row">
+          <span class="conf-label">Jak pewny jesteś?</span>
+          <div class="conf-btns">
+            {#each [1, 2, 3, 4, 5] as level}
+              <button class="conf-btn" class:active={confidence === level} onclick={() => confidence = level}>
+                {level}
+              </button>
+            {/each}
+          </div>
+          <span class="conf-desc">{['Zgaduję', 'Nie jestem pewien', 'Średnio', 'Pewnie', 'Na 100%'][confidence - 1]}</span>
+        </div>
         <button
           class="submit-btn"
           disabled={selectedAnswer === null}
@@ -180,6 +193,16 @@
         <ResultBox correct={isCorrect} {explanation} hint={currentQuiz.hint}>
           {hintContent}
         </ResultBox>
+        {#if confidence >= 4 && !isCorrect}
+          <div class="calibration-warn">
+            ⚠️ Byłeś pewny na <strong>{confidence}/5</strong>, ale odpowiedź była błędna.
+            To sygnał, że masz lukę – powtórz ten temat.
+          </div>
+        {:else if confidence <= 2 && isCorrect}
+          <div class="calibration-note">
+            💡 Znasz to lepiej niż myślisz! Daj sobie wyższy poziom pewności.
+          </div>
+        {/if}
         <button class="next-btn" onclick={nextQuiz}>
           {filteredQuizzes.filter(q => !seenIds.has(q.id)).length === 0 && sessionWrong.length === 0 ? '🏁 Wróć do listy' : '➡️ Następne pytanie'}
         </button>
@@ -330,4 +353,14 @@
   .summary-actions { display: flex; gap: 12px; justify-content: center; }
   .start-btn { padding: 12px 24px; background: #0ea5e9; color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
   .start-btn:hover { background: #0284c7; }
+
+  .confidence-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .conf-label { font-size: 13px; color: #94a3b8; }
+  .conf-btns { display: flex; gap: 4px; }
+  .conf-btn { width: 32px; height: 32px; border: 1px solid #334155; background: #0f172a; color: #94a3b8; border-radius: 50%; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .conf-btn:hover { border-color: #475569; color: #e2e8f0; }
+  .conf-btn.active { background: #0ea5e9; border-color: #0ea5e9; color: #fff; }
+  .conf-desc { font-size: 11px; color: #64748b; min-width: 80px; }
+  .calibration-warn { padding: 10px 14px; background: #ef444420; border: 1px solid #ef4444; border-radius: 8px; font-size: 13px; color: #fecaca; margin-bottom: 12px; }
+  .calibration-note { padding: 10px 14px; background: #22c55e20; border: 1px solid #22c55e; border-radius: 8px; font-size: 13px; color: #bbf7d0; margin-bottom: 12px; }
 </style>

@@ -37,8 +37,8 @@ fn complete_project(state: tauri::State<'_, AppState>, id: u32) -> Result<(bool,
 }
 
 #[tauri::command]
-fn submit_quiz(state: tauri::State<'_, AppState>, id: u32, answer: usize) -> Result<(bool, bool, String), String> {
-    let (found, correct, explanation) = state.store.submit_quiz_answer(id, answer);
+fn submit_quiz(state: tauri::State<'_, AppState>, id: u32, answer: usize, confidence: Option<u32>) -> Result<(bool, bool, String), String> {
+    let (found, correct, explanation) = state.store.submit_quiz_answer(id, answer, confidence);
     if correct {
         let _ = notify_rust(&"Poprawna odpowiedź! +15 XP");
     }
@@ -104,6 +104,16 @@ fn check_achievements(state: tauri::State<'_, AppState>) -> Result<Vec<u32>, Str
 #[tauri::command]
 fn get_unlocked_achievements(state: tauri::State<'_, AppState>) -> Result<Vec<Achievement>, String> {
     Ok(state.store.get_unlocked_achievements())
+}
+
+#[tauri::command]
+fn claim_daily(state: tauri::State<'_, AppState>) -> Result<(String, u32, u32), String> {
+    Ok(state.store.claim_daily())
+}
+
+#[tauri::command]
+fn complete_mission(state: tauri::State<'_, AppState>, id: u32) -> Result<(bool, Vec<u32>), String> {
+    Ok(state.store.complete_mission_step(id))
 }
 
 #[tauri::command]
@@ -189,6 +199,8 @@ pub fn run() {
             finish_speed_challenge,
             check_achievements,
             get_unlocked_achievements,
+            claim_daily,
+            complete_mission,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

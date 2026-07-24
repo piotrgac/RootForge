@@ -82,6 +82,21 @@ pub struct Quiz {
 pub struct QuizResult {
     pub quiz_id: u32,
     pub correct: bool,
+    #[serde(default)]
+    pub confidence: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Mission {
+    pub id: u32,
+    pub title: String,
+    pub description: String,
+    pub icon: String,
+    pub steps: Vec<u32>,
+    pub completed: bool,
+    pub xp_reward: u32,
+    #[serde(default)]
+    pub category: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -142,6 +157,9 @@ pub struct AppData {
     pub exam_attempts: Vec<ExamAttempt>,
     pub achievements: Vec<Achievement>,
     pub speed_records: Vec<SpeedRecord>,
+    pub missions: Vec<Mission>,
+    pub last_daily_date: Option<String>,
+    pub daily_streak: u32,
 }
 
 impl AppData {
@@ -156,6 +174,8 @@ impl AppData {
             .expect("Failed to parse quiz.json");
         let achievements: Vec<Achievement> = serde_json::from_str(include_str!("../data/achievements.json"))
             .expect("Failed to parse achievements.json");
+        let missions: Vec<Mission> = serde_json::from_str(include_str!("../data/missions.json"))
+            .expect("Failed to parse missions.json");
 
         AppData {
             xp: 0,
@@ -173,6 +193,9 @@ impl AppData {
             exam_attempts: Vec::new(),
             achievements,
             speed_records: Vec::new(),
+            missions,
+            last_daily_date: None,
+            daily_streak: 0,
         }
     }
 }
@@ -290,7 +313,7 @@ impl DataStore {
         (false, 1)
     }
 
-    pub fn submit_quiz_answer(&self, quiz_id: u32, answer_index: usize) -> (bool, bool, String) {
+    pub fn submit_quiz_answer(&self, quiz_id: u32, answer_index: usize, confidence: Option<u32>) -> (bool, bool, String) {
         let mut data = self.data.lock().unwrap();
         let q_idx = data.quizzes.iter().position(|q| q.id == quiz_id);
         match q_idx {
@@ -299,7 +322,7 @@ impl DataStore {
                 let correct = answer_index == q.correct_index;
                 let explanation = q.explanation.clone();
                 data.quiz_results.retain(|r| r.quiz_id != quiz_id);
-                data.quiz_results.push(QuizResult { quiz_id, correct });
+                data.quiz_results.push(QuizResult { quiz_id, correct, confidence });
                 if correct {
                     data.xp += 15;
                     data.level = 1 + data.xp / 100;
@@ -357,6 +380,50 @@ impl DataStore {
         let _ = self.check_achievements_inner(&mut data);
         drop(data);
         self.save();
+    }
+
+    pub fn claim_daily(&self) -> (String, u32, u32) {
+        let mut data = self.data.lock().unwrap();
+        let today = chrono::Local::now().format("%Y-%m-%d").to_string();
+        let xp_reward = 20 + data.daily_streak * 5;
+
+        if data.last_daily_date.as_deref() == Some(&today) {
+            let streak = data.daily_streak;
+            drop(data);
+            return ("already_claimed".into(), streak, xp_reward);
+        }
+
+        // Check if yesterday was claimed (or this is first claim)
+        let yesterday = (chrono::Local::now() - chrono::Duration::days(1)).format("%Y-%m-%d").to_string();
+        if data.last_daily_date.as_deref() == Some(&yesterday) || data.last_daily_date.is_none() {
+            data.daily_streak += 1;
+        } else {
+            data.daily_streak = 1; // reset streak
+        }
+        data.last_daily_date = Some(today.clone());
+        data.xp += xp_reward;
+        data.level = 1 + data.xp / 100;
+        let streak = data.daily_streak;
+        let _ = self.check_achievements_inner(&mut data);
+        drop(data);
+        self.save();
+        ("claimed".into(), streak, xp_reward)
+    }
+
+    pub fn complete_mission_step(&self, mission_id: u32) -> (bool, Vec<u32>) {
+        let mut data = self.data.lock().unwrap();
+        if let Some(m) = data.missions.iter_mut().find(|m| m.id == mission_id) {
+            if !m.completed {
+                m.completed = true;
+                data.xp += m.xp_reward;
+                data.level = 1 + data.xp / 100;
+                let unlocked = self.check_achievements_inner(&mut data);
+                drop(data);
+                self.save();
+                return (true, unlocked);
+            }
+        }
+        (false, vec![])
     }
 
     pub fn finish_speed_challenge(&self, command_id: u32, time_seconds: u32, correct: bool) -> (u32, Vec<u32>) {
@@ -592,7 +659,7 @@ mod tests {
         let q_id = { ds.data.lock().unwrap().quizzes[0].id };
         let correct_idx = { let data = ds.data.lock().unwrap(); data.quizzes.iter().find(|q| q.id == q_id).unwrap().correct_index };
 
-        let (found, correct, _) = ds.submit_quiz_answer(q_id, correct_idx);
+        let (found, correct, _) = ds.submit_quiz_answer(q_id, correct_idx, None);
         assert!(found);
         assert!(correct);
 
@@ -608,7 +675,7 @@ mod tests {
         let correct_idx = { let d = ds.data.lock().unwrap(); d.quizzes.iter().find(|q| q.id == q_id).unwrap().correct_index };
         let wrong_idx = if correct_idx == 0 { 1 } else { 0 };
 
-        ds.submit_quiz_answer(q_id, wrong_idx);
+        ds.submit_quiz_answer(q_id, wrong_idx, None);
 
         let data = ds.data.lock().unwrap();
         let wa = data.wrong_answers.iter().find(|w| w.quiz_id == q_id);
@@ -623,7 +690,7 @@ mod tests {
         let correct_idx = { let d = ds.data.lock().unwrap(); d.quizzes.iter().find(|q| q.id == q_id).unwrap().correct_index };
         let wrong_idx = 0.max(if correct_idx == 0 { 1 } else { 0 });
 
-        ds.submit_quiz_answer(q_id, wrong_idx);
+        ds.submit_quiz_answer(q_id, wrong_idx, None);
         let before = { ds.data.lock().unwrap().xp };
         ds.mark_quiz_correct_in_review(q_id);
 
