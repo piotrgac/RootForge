@@ -41,6 +41,7 @@
     localStorage.setItem('reviewed-challenges', JSON.stringify(reviewedToday));
     const ch = data.challenges.find(c => c.id === id);
     if (ch) ch.last_reviewed = new Date().toISOString().slice(0, 10);
+    invoke('review_challenge', { id }).catch(() => {});
   }
 
   function resetAll() {

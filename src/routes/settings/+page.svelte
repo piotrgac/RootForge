@@ -1,6 +1,6 @@
 <script>
   import { invoke } from '@tauri-apps/api/core';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
 
   let token = $state('');
   let gistId = $state('');
@@ -76,6 +76,18 @@
     status = 'Skopiowano do schowka';
   }
 
+  async function resetAll() {
+    if (confirm('Czy na pewno chcesz usunąć cały postęp? Tej operacji nie można cofnąć.')) {
+      try {
+        await invoke('reset_progress');
+        status = 'Postęp zresetowany. Odśwież aplikację.';
+        window.location.reload();
+      } catch (e) {
+        status = `Błąd: ${e}`;
+      }
+    }
+  }
+
   async function testNotify() {
     try {
       await invoke('send_test_notification');
@@ -86,6 +98,7 @@
   }
 
   let interval;
+  onDestroy(() => { if (interval) clearInterval(interval); });
   function startSession() {
     sessionRunning = true;
     sessionTimer = 0;
@@ -156,10 +169,16 @@
     </section>
 
     <section class="card">
-      <h2>🔔 Powiadomienia</h2>
-      <p class="card-desc">Przetestuj powiadomienia desktopowe.</p>
-      <button class="btn" onclick={testNotify}>📬 Wyślij testowe powiadomienie</button>
-    </section>
+        <h2>🔔 Powiadomienia</h2>
+        <p class="card-desc">Przetestuj powiadomienia desktopowe.</p>
+        <button class="btn" onclick={testNotify}>📬 Wyślij testowe powiadomienie</button>
+      </section>
+
+      <section class="card">
+        <h2>⚠️ Reset danych</h2>
+        <p class="card-desc">Usuń cały postęp i zacznij od nowa. Tej operacji nie można cofnąć.</p>
+        <button class="btn btn-danger" onclick={resetAll}>🗑️ Resetuj cały postęp</button>
+      </section>
 
     <section class="card">
       <h2>📄 Eksport Markdown</h2>

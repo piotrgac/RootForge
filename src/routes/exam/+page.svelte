@@ -1,6 +1,10 @@
 <script>
   import { invoke } from '@tauri-apps/api/core';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
+
+  onDestroy(() => {
+    if (timerInterval) clearInterval(timerInterval);
+  });
   import { getCategoryInfo } from '$lib/categories';
   import QuizOption from '$lib/components/QuizOption.svelte';
   import ResultBox from '$lib/components/ResultBox.svelte';

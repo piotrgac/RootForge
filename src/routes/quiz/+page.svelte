@@ -7,6 +7,18 @@
 
   let quizzes = $state([]);
   let quizResults = $state([]);
+
+  onMount(async () => {
+    try {
+      const data = await invoke('get_dashboard_stats');
+      quizzes = data.quizzes || [];
+      quizResults = data.quiz_results || [];
+    } catch (e) {
+      console.error(e);
+    } finally {
+      loading = false;
+    }
+  });
   let loading = $state(true);
   let currentQuiz = $state(null);
   let selectedAnswer = $state(null);

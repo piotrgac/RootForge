@@ -11,6 +11,8 @@
     { href: '/projects', label: 'Projekty', icon: '💻' },
     { href: '/quiz', label: 'Quiz', icon: '🧠' },
     { href: '/exam', label: 'Egzamin', icon: '📝' },
+    { href: '/practice', label: 'Mieszany', icon: '🎲' },
+    { href: '/search', label: 'Szukaj', icon: '🔍' },
     { href: '/vim', label: 'Vim', icon: '🔤' },
     { href: '/daily', label: 'Daily', icon: '📅' },
     { href: '/troubleshoot', label: 'Troubleshoot', icon: '🔧' },

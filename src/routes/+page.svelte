@@ -43,6 +43,26 @@
   });
   let todayMinutes = $derived(todaySessions.reduce((acc, s) => acc + s.duration_minutes, 0));
 
+  function computeCalibration(d) {
+    const results = d.quiz_results || [];
+    let highConfCorrect = 0, highConfTotal = 0;
+    let midConfCorrect = 0, midConfTotal = 0;
+    let lowConfCorrect = 0, lowConfTotal = 0;
+    for (const r of results) {
+      const c = r.confidence || 3;
+      if (c >= 4) { highConfTotal++; if (r.correct) highConfCorrect++; }
+      else if (c === 3) { midConfTotal++; if (r.correct) midConfCorrect++; }
+      else { lowConfTotal++; if (r.correct) lowConfCorrect++; }
+    }
+    return {
+      highConfAccuracy: highConfTotal > 0 ? Math.round(highConfCorrect / highConfTotal * 100) : 0,
+      midConfAccuracy: midConfTotal > 0 ? Math.round(midConfCorrect / midConfTotal * 100) : 0,
+      lowConfAccuracy: lowConfTotal > 0 ? Math.round(lowConfCorrect / lowConfTotal * 100) : 0,
+      highConfCorrect, highConfTotal, midConfCorrect, midConfTotal, lowConfCorrect, lowConfTotal,
+      total: results.length,
+    };
+  }
+
   function computeCategoryPerformance(d) {
     const quizzes = d.quizzes || [];
     const results = d.quiz_results || [];
@@ -134,6 +154,41 @@
     </div>
 
     {#if data?.quiz_results?.length}
+      {@const cal = computeCalibration(data)}
+      {#if cal.total > 5}
+        <div class="calibration-section">
+          <h2>🎯 Kalibracja wiedzy</h2>
+          <div class="cal-grid">
+            <div class="cal-item">
+              <span class="cal-label">Pewność 4-5</span>
+              <span class="cal-val" class:good={cal.highConfAccuracy >= 70} class:bad={cal.highConfAccuracy < 50}>
+                {cal.highConfAccuracy}%
+              </span>
+              <span class="cal-count">({cal.highConfCorrect}/{cal.highConfTotal})</span>
+            </div>
+            <div class="cal-item">
+              <span class="cal-label">Pewność 3</span>
+              <span class="cal-val">{cal.midConfAccuracy}%</span>
+              <span class="cal-count">({cal.midConfCorrect}/{cal.midConfTotal})</span>
+            </div>
+            <div class="cal-item">
+              <span class="cal-label">Pewność 1-2</span>
+              <span class="cal-val">{cal.lowConfAccuracy}%</span>
+              <span class="cal-count">({cal.lowConfCorrect}/{cal.lowConfTotal})</span>
+            </div>
+          </div>
+          <p class="cal-advice">
+            {#if cal.highConfAccuracy < 60}
+              ⚠️ Gdy jesteś pewny, często się mylisz – przyda się więcej praktyki.
+            {:else if cal.lowConfAccuracy > 70}
+              💡 Znasz więcej niż myślisz – ufaj sobie bardziej!
+            {:else}
+              ✅ Dobra kalibracja – znasz siebie.
+            {/if}
+          </p>
+        </div>
+      {/if}
+
       {@const catPerf = computeCategoryPerformance(data)}
       {@const weakAreas = catPerf.filter(c => c.accuracy < 60).sort((a, b) => a.accuracy - b.accuracy)}
       {#if weakAreas.length > 0}
@@ -285,6 +340,17 @@
     font-size: 12px;
     color: #64748b;
   }
+
+  .calibration-section { margin-bottom: 28px; }
+  .calibration-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #e2e8f0; }
+  .cal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 8px; }
+  .cal-item { text-align: center; padding: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 10px; }
+  .cal-label { display: block; font-size: 11px; color: #64748b; margin-bottom: 4px; }
+  .cal-val { display: block; font-size: 24px; font-weight: 700; color: #e2e8f0; }
+  .cal-val.good { color: #22c55e; }
+  .cal-val.bad { color: #ef4444; }
+  .cal-count { font-size: 11px; color: #64748b; }
+  .cal-advice { font-size: 13px; color: #94a3b8; padding: 8px 12px; background: #1e293b; border-radius: 8px; }
 
   .weak-section { margin-bottom: 28px; }
   .weak-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; color: #e2e8f0; }

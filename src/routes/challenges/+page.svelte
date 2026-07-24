@@ -24,6 +24,11 @@
     : filter === 'completed' ? challenges.filter(c => c.completed)
     : challenges.filter(c => !c.completed));
 
+  let completedIds = $derived(new Set(challenges.filter(c => c.completed).map(c => c.id)));
+  function isLocked(ch) {
+    return !ch.completed && (ch.depends_on || []).some(depId => !completedIds.has(depId));
+  }
+
   async function toggleComplete(ch) {
     const [success, xp, level] = await invoke('complete_challenge', { id: ch.id });
     if (success) {
@@ -57,7 +62,7 @@
     <div class="challenge-grid">
       {#each filtered as ch (ch.id)}
         {@const cat = getCategoryInfo(ch.category)}
-        <div class="challenge-card" class:completed={ch.completed}>
+        <div class="challenge-card" class:completed={ch.completed} class:locked={isLocked(ch)}>
           <div class="ch-top">
             <span class="ch-category" style="background: {cat.color}20; color: {cat.color}">
               {cat.name}
@@ -82,7 +87,9 @@
               {#if ch.details}
                 <button class="details-btn" onclick={() => detailChallenge = ch}>📖</button>
               {/if}
-              {#if !ch.completed}
+              {#if isLocked(ch)}
+                <span class="locked-badge">🔒 Wymaga wcześniejszych wyzwań</span>
+              {:else if !ch.completed}
                 <button class="complete-btn" onclick={() => toggleComplete(ch)}>
                   Oznacz jako ukończone
                 </button>
@@ -110,6 +117,8 @@
   .challenge-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; transition: all 0.2s; }
   .challenge-card:hover { border-color: #475569; }
   .challenge-card.completed { opacity: 0.7; border-color: #166534; }
+  .challenge-card.locked { opacity: 0.5; border-color: #475569; }
+  .locked-badge { color: #64748b; font-size: 11px; }
 
   .ch-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .ch-category { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }

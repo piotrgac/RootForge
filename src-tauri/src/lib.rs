@@ -107,6 +107,18 @@ fn get_unlocked_achievements(state: tauri::State<'_, AppState>) -> Result<Vec<Ac
 }
 
 #[tauri::command]
+fn review_challenge(state: tauri::State<'_, AppState>, id: u32) -> Result<(), String> {
+    state.store.review_challenge(id);
+    Ok(())
+}
+
+#[tauri::command]
+fn reset_progress(state: tauri::State<'_, AppState>) -> Result<(), String> {
+    state.store.reset_progress();
+    Ok(())
+}
+
+#[tauri::command]
 fn complete_troubleshoot(state: tauri::State<'_, AppState>, id: u32) -> Result<(bool, u32, Vec<u32>), String> {
     Ok(state.store.complete_troubleshoot(id))
 }
@@ -207,6 +219,8 @@ pub fn run() {
             claim_daily,
             complete_mission,
             complete_troubleshoot,
+            review_challenge,
+            reset_progress,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

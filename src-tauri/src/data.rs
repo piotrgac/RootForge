@@ -291,13 +291,27 @@ impl DataStore {
 
     pub fn complete_challenge(&self, challenge_id: u32) -> (bool, u32, u32) {
         let mut data = self.data.lock().unwrap();
+        let completed_ids: std::collections::HashSet<u32> = data.challenges.iter().filter(|c| c.completed).map(|c| c.id).collect();
+        // Build the new set including the one we're about to complete
+        let new_completed_ids: std::collections::HashSet<u32> = {
+            let mut set = completed_ids.clone();
+            set.insert(challenge_id);
+            set
+        };
         if let Some(ch) = data.challenges.iter_mut().find(|c| c.id == challenge_id) {
             if !ch.completed {
                 ch.completed = true;
+                ch.last_reviewed = Some(chrono::Local::now().format("%Y-%m-%d").to_string());
                 let xp_gain = ch.difficulty as u32 * 10;
                 data.xp += xp_gain;
                 let new_level = 1 + data.xp / 100;
                 data.level = new_level;
+                // Check milestones against new completed set
+                for m in data.milestones.iter_mut() {
+                    if !m.completed && m.challenge_ids.iter().all(|cid| new_completed_ids.contains(cid)) {
+                        m.completed = true;
+                    }
+                }
                 let _ = self.check_achievements_inner(&mut data);
                 drop(data);
                 self.save();
@@ -343,7 +357,6 @@ impl DataStore {
                 let q = &data.quizzes[idx];
                 let correct = answer_index == q.correct_index;
                 let explanation = q.explanation.clone();
-                data.quiz_results.retain(|r| r.quiz_id != quiz_id);
                 data.quiz_results.push(QuizResult { quiz_id, correct, confidence });
                 if correct {
                     data.xp += 15;
@@ -461,6 +474,26 @@ impl DataStore {
         drop(data);
         self.save();
         (true, xp_gain, unlocked)
+    }
+
+    pub fn review_challenge(&self, challenge_id: u32) {
+        let mut data = self.data.lock().unwrap();
+        if let Some(ch) = data.challenges.iter_mut().find(|c| c.id == challenge_id) {
+            ch.last_reviewed = Some(chrono::Local::now().format("%Y-%m-%d").to_string());
+        }
+        drop(data);
+        self.save();
+    }
+
+    pub fn reset_progress(&self) {
+        let mut data = self.data.lock().unwrap();
+        let dir = self.path.parent().unwrap_or(std::path::Path::new("."));
+        let fresh = DataStore::new(dir.to_path_buf());
+        if let Ok(fresh_data) = fresh.data.lock() {
+            *data = fresh_data.clone();
+        }
+        drop(data);
+        self.save();
     }
 
     pub fn finish_speed_challenge(&self, command_id: u32, time_seconds: u32, correct: bool) -> (u32, Vec<u32>) {
