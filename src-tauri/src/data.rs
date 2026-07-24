@@ -483,6 +483,9 @@ impl DataStore {
                     let total_minutes: u32 = data.sessions.iter().map(|s| s.duration_minutes).sum();
                     total_minutes >= 600
                 },
+                16 => data.speed_records.iter().filter(|r| r.correct && r.command_id >= 1000 && r.command_id <= 1100).count() >= 5,
+                17 => data.speed_records.iter().filter(|r| r.correct && r.command_id >= 1000 && r.command_id <= 1100).count() >= 15,
+                18 => data.speed_records.iter().filter(|r| r.correct && r.command_id >= 1000 && r.command_id <= 1100).count() >= 30,
                 _ => false,
             };
             if should_unlock {

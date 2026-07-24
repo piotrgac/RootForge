@@ -11,6 +11,7 @@
     { href: '/projects', label: 'Projekty', icon: '💻' },
     { href: '/quiz', label: 'Quiz', icon: '🧠' },
     { href: '/exam', label: 'Egzamin', icon: '📝' },
+    { href: '/vim', label: 'Vim', icon: '🔤' },
     { href: '/daily', label: 'Daily', icon: '📅' },
     { href: '/missions', label: 'Misje', icon: '🎯' },
     { href: '/speed', label: 'Speed', icon: '⚡' },
