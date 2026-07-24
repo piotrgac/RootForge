@@ -2563,5 +2563,230 @@
     "explanation": "AWS Lambda uruchamia kod w odpowiedzi na zdarzenia, bez zarzadzania serwerami.",
     "stage": 7,
     "hint": null
+  },
+  {
+    "id": 172,
+    "question": "Które polecenie sformatuje partycję /dev/sda2 jako zaszyfrowane urządzenie LUKS?",
+    "options": [
+      "cryptsetup luksFormat /dev/sda2",
+      "cryptsetup luksOpen /dev/sda2",
+      "cryptsetup luksClose /dev/sda2",
+      "mkfs.luks /dev/sda2"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "cryptsetup luksFormat tworzy zaszyfrowane urządzenie LUKS. UWAGA: ta operacja jest nieodwracalna i usuwa wszystkie dane!",
+    "stage": 7,
+    "hint": "luksFormat = formatuj jako LUKS"
+  },
+  {
+    "id": 173,
+    "question": "Jaki plik konfiguracyjny określa zaszyfrowane urządzenia do otwarcia przy starcie systemu?",
+    "options": [
+      "/etc/crypttab",
+      "/etc/fstab",
+      "/etc/luks.conf",
+      "/etc/cryptsetup.conf"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "/etc/crypttab określa zaszyfrowane urządzenia, które mają być automatycznie otwarte przy starcie. Format: <name> <device> <keyfile> <options>",
+    "stage": 7,
+    "hint": "crypt + tab = tabela szyfrowania"
+  },
+  {
+    "id": 174,
+    "question": "Jak otworzyć zaszyfrowane urządzenie LUKS /dev/sda2 pod nazwą 'encrypted_data'?",
+    "options": [
+      "cryptsetup luksOpen /dev/sda2 encrypted_data",
+      "cryptsetup open /dev/sda2 encrypted_data",
+      "mount /dev/sda2 /mnt/encrypted",
+      "luks-open /dev/sda2 encrypted_data"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "cryptsetup luksOpen otwiera zaszyfrowane urządzenie i tworzy mapowanie w /dev/mapper/. Po otwarciu można zamontować /dev/mapper/encrypted_data.",
+    "stage": 7,
+    "hint": "luksOpen = otwórz LUKS"
+  },
+  {
+    "id": 175,
+    "question": "Który moduł PAM odpowiada za weryfikację tożsamości użytkownika (np. hasło)?",
+    "options": [
+      "auth",
+      "account",
+      "password",
+      "session"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "Moduł 'auth' weryfikuje tożsamość (hasło, klucz SSH). 'account' kontrola dostępu, 'password' zmiana hasła, 'session' setup sesji.",
+    "stage": 7,
+    "hint": "auth = authentication = autentykacja"
+  },
+  {
+    "id": 176,
+    "question": "Jaka flaga kontroli w PAM oznacza 'musi przejść, ale kontynuuje do następnego modułu'?",
+    "options": [
+      "required",
+      "requisite",
+      "sufficient",
+      "optional"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "'required' - moduł musi przejść, ale PAM kontynuuje do kolejnych modułów. 'requisite' - natychmiastowy fail. 'sufficient' - jeśli przejdzie, OK.",
+    "stage": 7,
+    "hint": "required = wymagane, ale kontynuuj"
+  },
+  {
+    "id": 177,
+    "question": "Które narzędzie automatycznie dołącza system RHEL do domeny Active Directory?",
+    "options": [
+      "realm",
+      "adcli",
+      "sssd",
+      "ldapadd"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "realm discover/join automatycznie konfiguruje SSSD i dołącza do domeny AD. adcli to niższe narzędzie używane przez realm.",
+    "stage": 7,
+    "hint": "realm = królestwo (domena)"
+  },
+  {
+    "id": 178,
+    "question": "Jaki plik konfiguracyjny SSSD określa domeny i ustawienia autentykacji?",
+    "options": [
+      "/etc/sssd/sssd.conf",
+      "/etc/sssd.conf",
+      "/etc/pam.d/sssd",
+      "/etc/nsswitch.conf"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "/etc/sssd/sssd.conf to główny plik konfiguracyjny SSSD. Określa domeny (AD, LDAP), cache, timeout i inne ustawienia.",
+    "stage": 7,
+    "hint": "sssd + .conf"
+  },
+  {
+    "id": 179,
+    "question": "Która opcja SSSD pozwala na logowanie gdy serwer AD jest niedostępny?",
+    "options": [
+      "cache_credentials = True",
+      "offline_credentials_expiration = 7",
+      "enumerate = False",
+      "ad_gpo_access_control = permissive"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "cache_credentials = True pozwala SSSD cache'ować credentials i autentykować offline. offline_credentials_expiration określa ile dni cache jest ważny.",
+    "stage": 7,
+    "hint": "cache credentials = cache'uj dane logowania"
+  },
+  {
+    "id": 180,
+    "question": "Które polecenie wyświetla historyczne metryki CPU z ostatnich 7 dni?",
+    "options": [
+      "sar -u",
+      "sar -r",
+      "sar -d",
+      "sar -n DEV"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "sar -u pokazuje CPU usage. -r = RAM, -d = disk, -n DEV = network. Dane historyczne w /var/log/sa/sa*.",
+    "stage": 7,
+    "hint": "sar -u = CPU usage"
+  },
+  {
+    "id": 181,
+    "question": "Jakie polecenie pokaże real-time I/O statistics dla dysków co 1 sekundę?",
+    "options": [
+      "iostat -x 1",
+      "iostat 1",
+      "vmstat -d 1",
+      "pidstat -d 1"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "iostat -x 1 pokazuje rozszerzone I/O stats co 1 sekundę. %util > 80% oznacza bottleneck!",
+    "stage": 7,
+    "hint": "iostat = I/O statistics, -x = extended"
+  },
+  {
+    "id": 182,
+    "question": "Które polecenie pokaże statystyki CPU per proces?",
+    "options": [
+      "pidstat -u",
+      "pidstat -d",
+      "pidstat -r",
+      "pidstat -p 1234"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "pidstat -u pokazuje CPU usage per proces. -d = I/O, -r = memory, -p PID = konkretny proces.",
+    "stage": 7,
+    "hint": "pidstat = process ID statistics, -u = CPU"
+  },
+  {
+    "id": 183,
+    "question": "Jak utworzysz snapshot subvolume Btrfs /mnt/btrfs/@home?",
+    "options": [
+      "btrfs subvolume snapshot /mnt/btrfs/@home /mnt/btrfs/@home-snapshot",
+      "btrfs snapshot /mnt/btrfs/@home",
+      "btrfs create snapshot /mnt/btrfs/@home",
+      "btrfs subvolume create-snapshot /mnt/btrfs/@home"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "btrfs subvolume snapshot tworzy snapshot subvolume. Dodaj -r dla read-only snapshot (dla backup).",
+    "stage": 7,
+    "hint": "btrfs subvolume snapshot <source> <destination>"
+  },
+  {
+    "id": 184,
+    "question": "Które polecenie zbuduje RPM package z spec file?",
+    "options": [
+      "rpmbuild -ba ~/rpmbuild/SPECS/myapp.spec",
+      "rpmbuild -bb ~/rpmbuild/SPECS/myapp.spec",
+      "rpmbuild -bs ~/rpmbuild/SPECS/myapp.spec",
+      "rpm -i myapp.spec"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "rpmbuild -ba buduje binary + source RPM. -bb = tylko binary, -bs = tylko source. Wyniki w ~/rpmbuild/RPMS/ i SRPMS/.",
+    "stage": 7,
+    "hint": "rpmbuild -ba = build all"
+  },
+  {
+    "id": 185,
+    "question": "Jakie polecenie utworzy metadane repozytorium YUM/DNF z katalogu /var/www/html/repo/?",
+    "options": [
+      "createrepo /var/www/html/repo/",
+      "yum makecache",
+      "dnf repolist",
+      "rpm --rebuilddb"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "createrepo tworzy metadane repozytorium (repodata/) z katalogu zawierającego RPM packages. Niezbędne dla lokalnego repo.",
+    "stage": 7,
+    "hint": "create + repo = utwórz repozytorium"
+  },
+  {
+    "id": 186,
+    "question": "Który plik konfiguracyjny rsyslog określa reguły wysyłania logów do zdalnego serwera?",
+    "options": [
+      "/etc/rsyslog.d/remote.conf",
+      "/etc/rsyslog.conf",
+      "/etc/syslog.conf",
+      "/etc/logrotate.d/rsyslog"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "/etc/rsyslog.d/remote.conf (lub /etc/rsyslog.conf) określa reguły wysyłania logów. Format: *.* @@server:514 (TCP) lub *@server:514 (UDP).",
+    "stage": 7,
+    "hint": "rsyslog.d/remote.conf = zdalne logowanie"
   }
 ]

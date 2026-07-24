@@ -66,6 +66,17 @@
       challenges: [7,16,19,36,37,38,45,54,60,70],
       salary: '18-28 tys. PLN',
       cert: 'EX294',
+      next: 'Enterprise Linux Admin',
+    },
+    {
+      id: 'enterprise',
+      title: 'Enterprise Linux Admin',
+      subtitle: 'Zarządzasz infrastrukturą enterprise',
+      icon: '🏢',
+      color: '#ec4899',
+      skills: ['LUKS encryption', 'PAM & LDAP/AD', 'sysstat diagnostics', 'Btrfs', 'Multipath I/O'],
+      challenges: [188,189,190,191,192,193,194,195,196,197,198,199,200,201,202],
+      salary: '20-30 tys. PLN',
       next: 'DevOps / SRE',
     },
     {

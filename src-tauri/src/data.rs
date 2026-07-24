@@ -561,6 +561,9 @@ impl DataStore {
                 21 => data.challenges.iter().filter(|c| c.completed && c.exam_tag.as_deref() == Some("devops")).count() >= 10,
                 22 => data.challenges.iter().filter(|c| c.completed && c.exam_tag.as_deref() == Some("devops")).count() >= 10,
                 23 => data.challenges.iter().filter(|c| c.completed && c.exam_tag.as_deref() == Some("devops")).count() >= 30,
+                24 => data.challenges.iter().filter(|c| c.completed && c.id >= 188 && c.id <= 190).count() >= 3,
+                25 => data.challenges.iter().filter(|c| c.completed && (c.id >= 191 && c.id <= 195)).count() >= 5,
+                26 => data.challenges.iter().filter(|c| c.completed && (c.id >= 196 && c.id <= 197)).count() >= 2,
                 _ => false,
             };
             if should_unlock {

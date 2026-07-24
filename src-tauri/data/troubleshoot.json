@@ -348,5 +348,47 @@
       "Sprawdz logi Samba w /var/log/samba/"
     ],
     "solution": "Uzytkownik 'jan' nie istnieje w systemie (Samba wymaga konta). Rozwiazanie: 'useradd -M -s /sbin/nologin jan', potem 'smbpasswd -a jan'. Sprawdz testparm."
+  },
+  {
+    "id": 26,
+    "title": "LUKS boot failure - system nie może odszyfrować root",
+    "scenario": "Po restarcie systemu RHEL z zaszyfrowanym root filesystem, system zatrzymuje się na ekranie 'Please unlock disk luks-xxx'. Podanie poprawnego hasła nie pomaga, system wraca do promptu. Jak zdiagnozować i naprawić problem?",
+    "category": "security",
+    "difficulty": 5,
+    "hints": [
+      "Sprawdź czy klawiatura jest poprawnie mapowana (spróbuj wpisać hasło w prompt rescue)",
+      "Użyj Live CD/USB i chroot do systemu",
+      "Sprawdź /etc/crypttab i czy klucz/keyfile istnieje"
+    ],
+    "solution": "Problem: uszkodzony keyfile, błędny /etc/crypttab, lub problem z initramfs.\n\nDiagnostyka:\n1. Boot z Live CD/USB\n2. Mount zaszyfrowaną partycję:\n   cryptsetup luksOpen /dev/sda2 luks-xxx\n   mount /dev/mapper/luks-xxx /mnt\n3. Chroot:\n   mount --bind /dev /mnt/dev\n   mount --bind /proc /mnt/proc\n   mount --bind /sys /mnt/sys\n   chroot /mnt\n4. Sprawdź /etc/crypttab:\n   cat /etc/crypttab\n5. Regeneruj initramfs:\n   dracut -f\n6. Exit i reboot:\n   exit\n   umount /mnt/{dev,proc,sys}\n   umount /mnt\n   cryptsetup luksClose luks-xxx\n   reboot\n\nAlternatywnie: użyj keyfile zamiast hasła (bezpieczniejsze i eliminuje problemy z klawiaturą).",
+    "completed": false
+  },
+  {
+    "id": 27,
+    "title": "LDAP auth timeout - SSSD nie łączy się z AD",
+    "scenario": "Użytkownicy z Active Directory nie mogą się zalogować do serwera RHEL. Komenda 'id jan@ad.example.com' zwraca 'no such user'. Logi /var/log/sssd/ pokazują 'LDAP connection timeout'. Jak zdiagnozować i naprawić problem?",
+    "category": "network",
+    "difficulty": 4,
+    "hints": [
+      "Sprawdź czy DNS rozwiązuje nazwę kontrolera domeny AD",
+      "Sprawdź firewall - porty 389 (LDAP), 636 (LDAPS), 88 (Kerberos)",
+      "Sprawdź status SSSD i logi"
+    ],
+    "solution": "Problem: brak łączności z AD, firewall blokuje, lub błędna konfiguracja DNS/SSSD.\n\nDiagnostyka:\n1. Sprawdź DNS:\n   nslookup ad.example.com\n   dig _ldap._tcp.ad.example.com SRV\n\n2. Sprawdź firewall:\n   firewall-cmd --list-all\n   nc -zv ad.example.com 389\n   nc -zv ad.example.com 88\n\n3. Sprawdź SSSD:\n   systemctl status sssd\n   journalctl -u sssd -n 50\n   tail -f /var/log/sssd/sssd_ad.example.com.log\n\n4. Sprawdź konfigurację:\n   realm list\n   cat /etc/sssd/sssd.conf\n   cat /etc/krb5.conf\n\n5. Testuj Kerberos:\n   kinit Administrator@AD.EXAMPLE.COM\n   klist\n\n6. Rozwiązania:\n   - Otwórz firewall: firewall-cmd --add-service={ldap,kerberos} --permanent\n   - Napraw DNS: dodaj DC do /etc/resolv.conf\n   - Regeneruj Kerberos keytab: net ads keytab create\n   - Restart SSSD: systemctl restart sssd\n   - Wyczyść cache: sssctl cache-remove",
+    "completed": false
+  },
+  {
+    "id": 28,
+    "title": "Disk I/O bottleneck - system jest wolny, high iowait",
+    "scenario": "Serwer RHEL działa bardzo wolno. Komenda 'top' pokazuje high %wa (I/O wait) w CPU stats. Aplikacje działają wolno, logi wskazują na problemy z dyskiem. Jak zdiagnozować który proces/dysk powoduje bottleneck i jak go rozwiązać?",
+    "category": "system",
+    "difficulty": 4,
+    "hints": [
+      "Użyj iostat -x do sprawdzenia which disk jest saturated",
+      "Użyj pidstat -d do znalezienia procesu z highest I/O",
+      "Sprawdź czy to nie jest problem z NFS/SAN"
+    ],
+    "solution": "Problem: disk I/O bottleneck - jeden lub więcej dysków jest saturated (%util > 80%).\n\nDiagnostyka:\n1. Sprawdź ogólny I/O:\n   iostat -x 1 10\n   # Szukaj: %util > 80%, await > 20ms\n\n2. Znajdź proces odpowiedzialny:\n   pidstat -d 1 10\n   # Szukaj: highest kB_wr/s lub kB_rd/s\n\n3. Sprawdź co proces robi:\n   ls -l /proc/<pid>/fd\n   strace -p <pid> -e trace=file\n\n4. Sprawdź filesystem:\n   df -h\n   mount | grep -E 'ext4|xfs'\n\n5. Rozwiązania:\n   a) Zmień scheduler I/O:\n      echo mq-deadline > /sys/block/sda/queue/scheduler\n   \n   b) Zwiększ readahead:\n      blockdev --setra 8192 /dev/sda\n   \n   c) Przenieś I/O intensive app na SSD:\n      mount -o noatime /dev/sdb1 /mnt/ssd\n   \n   d) Optymalizuj aplikację:\n      - Użyj buffered I/O zamiast direct I/O\n      - Batch writes zamiast pojedynczych\n      - Użyj memory-mapped files\n   \n   e) Dodaj RAM dla cache:\n      # Linux automatycznie cache'uje filesystem w RAM\n   \n   f) Sprawdź NFS/SAN latency:\n      nfsstat -c\n      iscsiadm -m session -P 3",
+    "completed": false
   }
 ]

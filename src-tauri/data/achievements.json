@@ -159,5 +159,26 @@
     "description": "Ukocz 30 wyzwan DevOps (stage >= 6)",
     "icon": "🔧",
     "unlocked": false
+  },
+  {
+    "id": 24,
+    "title": "Encryption Master",
+    "description": "Ukończ wszystkie wyzwania LUKS/dm-crypt",
+    "icon": "🔐",
+    "unlocked": false
+  },
+  {
+    "id": 25,
+    "title": "Auth Expert",
+    "description": "Ukończ wyzwania PAM i LDAP/AD",
+    "icon": "🔑",
+    "unlocked": false
+  },
+  {
+    "id": 26,
+    "title": "Performance Guru",
+    "description": "Ukończ wyzwania sysstat (sar, vmstat, iostat)",
+    "icon": "📊",
+    "unlocked": false
   }
 ]

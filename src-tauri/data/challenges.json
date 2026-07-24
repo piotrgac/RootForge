@@ -2684,5 +2684,216 @@
       169,
       172
     ]
+  },
+  {
+    "id": 188,
+    "title": "LUKS - Szyfrowanie Partycji",
+    "description": "Zabezpiecz dane przez szyfrowanie dysku za pomocą LUKS/dm-crypt",
+    "category": "security",
+    "difficulty": 4,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Szyfrowania partycji dysku za pomocą LUKS (Linux Unified Key Setup).\n\n### Wymagania:\n- Podstawowa znajomość partycjonowania\n- Dostęp do dodatkowej partycji lub dysku\n\n## Podstawy LUKS\nLUKS to standard szyfrowania dysków w Linux. Używa dm-crypt do tworzenia zaszyfrowanych urządzeń blokowych.\n\n## Szyfrowanie partycji\n```bash\n# 1. Zainstaluj cryptsetup\ndnf install -y cryptsetup\n\n# 2. Sformatuj partycję jako LUKS (UWAGA: usuwa dane!)\ncryptsetup luksFormat /dev/sda2\n# Podaj hasło (min. 8 znaków)\n\n# 3. Otwórz zaszyfrowane urządzenie\ncryptsetup luksOpen /dev/sda2 encrypted_data\n\n# 4. Utwórz system plików\nmkfs.xfs /dev/mapper/encrypted_data\n\n# 5. Zamontuj\nmkdir -p /mnt/encrypted\nmount /dev/mapper/encrypted_data /mnt/encrypted\n```\n\n## Zarządzanie kluczami\n```bash\n# Dodaj drugi klucz (np. key file)\ndd if=/dev/urandom of=/root/luks-keyfile bs=512 count=8\nchmod 400 /root/luks-keyfile\ncryptsetup luksAddKey /dev/sda2 /root/luks-keyfile\n\n# Zmień hasło\ncryptsetup luksChangeKey /dev/sda2\n\n# Wyświetl informacje o LUKS\ncryptsetup luksDump /dev/sda2\n```\n\n## Zamknięcie i otwarcie\n```bash\n# Zamknij zaszyfrowane urządzenie\numount /mnt/encrypted\ncryptsetup luksClose encrypted_data\n\n# Otwórz ponownie\ncryptsetup luksOpen /dev/sda2 encrypted_data\nmount /dev/mapper/encrypted_data /mnt/encrypted\n```\n\n### Weryfikacja:\n```bash\nlsblk -f | grep crypto\ncryptsetup status encrypted_data\nmount | grep encrypted\n```\n\n## Uwagi\n- ⚠️ `luksFormat` **nieodwracalnie** usuwa dane!\n- Używaj silnych haseł (min. 12 znaków, mix wielkich/małych/cyfr/specjalnych)\n- Zawsze miej backup kluczy w bezpiecznym miejscu\n- Szyfrowanie spowalnia I/O o ~5-10%",
+    "stage": 7,
+    "exam_tag": "rhcsa",
+    "depends_on": [
+      8
+    ]
+  },
+  {
+    "id": 189,
+    "title": "LUKS - /etc/crypttab i Auto-mount",
+    "description": "Skonfiguruj automatyczne otwieranie zaszyfrowanych dysków przy starcie systemu",
+    "category": "security",
+    "difficulty": 4,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Automatycznego montowania zaszyfrowanych partycji przez /etc/crypttab i /etc/fstab.\n\n### Wymagania:\n- Ukończone wyzwanie #188 (LUKS basics)\n\n## /etc/crypttab\nPlik konfiguracyjny określający zaszyfrowane urządzenia do otwarcia przy starcie.\n\n### Format:\n```\n<name> <device> <keyfile> <options>\n```\n\n### Przykład:\n```bash\n# Otwórz /dev/sda2 jako encrypted_data, użyj keyfile\nencrypted_data /dev/sda2 /root/luks-keyfile luks\n\n# Pytaj o hasło przy starcie (bez keyfile)\nencrypted_data /dev/sda2 none luks\n\n# Opcje: discard (TRIM dla SSD), timeout\nencrypted_data /dev/sda2 none luks,discard,timeout=30\n```\n\n## Automatyczne montowanie w /etc/fstab\n```bash\n# Dodaj do /etc/fstab\n/dev/mapper/encrypted_data /mnt/encrypted xfs defaults 0 2\n```\n\n## Testowanie konfiguracji\n```bash\n# Przeładuj crypttab bez restartu\nsystemctl daemon-reload\n\n# Testuj otwarcie\ncryptdisks_start encrypted_data\n\n# Sprawdź status\nsystemctl status systemd-cryptsetup@encrypted_data.service\n```\n\n## Key file vs hasło\n```bash\n# Użyj key file (bezpieczniejsze, automatyczne)\ndd if=/dev/urandom of=/root/luks-keyfile bs=512 count=8\nchmod 400 /root/luks-keyfile\ncryptsetup luksAddKey /dev/sda2 /root/luks-keyfile\n\n# Usuń hasło, zostaw tylko keyfile\ncryptsetup luksRemoveKey /dev/sda2\n```\n\n### Weryfikacja:\n```bash\ncat /etc/crypttab\ngrep encrypted /etc/fstab\nlsblk -f\n```\n\n## Uwagi\n- ⚠️ Key file musi mieć uprawnienia 400 (tylko root)\n- Przechowuj backup key file w bezpiecznym miejscu (np. USB w sejfie)\n- `discard` opcja włącza TRIM dla SSD (lepsza wydajność, ale mniejsze bezpieczeństwo)",
+    "stage": 7,
+    "exam_tag": "rhcsa",
+    "depends_on": [
+      188
+    ]
+  },
+  {
+    "id": 190,
+    "title": "LUKS - Szyfrowanie Swap i LVM na LUKS",
+    "description": "Zabezpiecz swap i utwórz LVM na zaszyfrowanym dysku",
+    "category": "security",
+    "difficulty": 5,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Szyfrowania swap i tworzenia LVM na zaszyfrowanych urządzeniach.\n\n### Wymagania:\n- Ukończone wyzwanie #189\n\n## Szyfrowanie Swap\nSwap zawiera dane z RAM, więc musi być szyfrowany.\n\n### Metoda 1: Random key (każdy restart = nowy klucz)\n```bash\n# /etc/crypttab\nswap /dev/sda3 /dev/urandom swap,cipher=aes-xts-plain64,size=512\n\n# /etc/fstab\n/dev/mapper/swap none swap sw 0 0\n```\n\n### Metoda 2: Persistent key\n```bash\n# Utwórz key file\ndd if=/dev/urandom of=/root/swap-key bs=512 count=8\nchmod 400 /root/swap-key\n\n# Sformatuj swap jako LUKS\ncryptsetup luksFormat /dev/sda3 /root/swap-key\ncryptsetup luksOpen /dev/sda3 swap --key-file=/root/swap-key\nmkswap /dev/mapper/swap\n```\n\n## LVM na LUKS\nUtwórzPhysical Volume na zaszyfrowanym urządzeniu.\n\n```bash\n# 1. Szyfruj partycję\ncryptsetup luksFormat /dev/sda4\ncryptsetup luksOpen /dev/sda4 crypt_lvm\n\n# 2. Utwórz PV\npvcreate /dev/mapper/crypt_lvm\n\n# 3. Utwórz VG\nvgcreate crypt_vg /dev/mapper/crypt_lvm\n\n# 4. Utwórz LV\nlvcreate -L 20G -n root crypt_vg\nlvcreate -L 50G -n home crypt_vg\nlvcreate -l 100%FREE -n data crypt_vg\n\n# 5. Formatuj i montuj\nmkfs.xfs /dev/crypt_vg/root\nmkfs.xfs /dev/crypt_vg/home\nmkfs.xfs /dev/crypt_vg/data\n\nmount /dev/crypt_vg/root /mnt/root\nmount /dev/crypt_vg/home /mnt/home\nmount /dev/crypt_vg/data /mnt/data\n```\n\n## /etc/crypttab dla LVM\n```bash\ncrypt_lvm /dev/sda4 /root/luks-keyfile luks\n```\n\n## /etc/fstab dla LVM\n```bash\n/dev/crypt_vg/root /mnt/root xfs defaults 0 1\n/dev/crypt_vg/home /mnt/home xfs defaults 0 2\n/dev/crypt_vg/data /mnt/data xfs defaults 0 2\n```\n\n### Weryfikacja:\n```bash\nlsblk -f\npvs\nvgs\nlvs\ncat /etc/crypttab\n```\n\n## Uwagi\n- LVM na LUKS daje elastyczność (resize, snapshots) + bezpieczeństwo\n- Swap z random key jest bezpieczniejszy (każdy boot = nowy klucz)\n- Backup key files jest krytyczny!",
+    "stage": 7,
+    "exam_tag": "rhcsa",
+    "depends_on": [
+      189,
+      8
+    ]
+  },
+  {
+    "id": 191,
+    "title": "PAM - Fundamentals",
+    "description": "Zrozum Pluggable Authentication Modules i konfigurację autentykacji",
+    "category": "security",
+    "difficulty": 4,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Konfiguracji PAM (Pluggable Authentication Modules) dla kontroli dostępu.\n\n### Wymagania:\n- Podstawowa znajomość autentykacji Linux\n\n## Co to jest PAM?\nPAM to framework autentykacji w Linux. Pozwala na elastyczną konfigurację metod logowania bez zmiany aplikacji.\n\n## Struktura PAM\n```\n/etc/pam.d/           # Konfiguracja per usługa\n  ├── sshd            # SSH\n  ├── login           # Lokalny login\n  ├── sudo            # sudo\n  ├── passwd          # zmiana hasła\n  └── system-auth     # Wspólna konfiguracja\n\n/usr/lib64/security/  # Moduły PAM\n  ├── pam_unix.so     # Standardowa autentykacja (/etc/passwd, /etc/shadow)\n  ├── pam_faillock.so # Blokowanie po błędnych logowaniach\n  ├── pam_pwquality.so # Polityka haseł\n  └── pam_limits.so   # Limity zasobów\n```\n\n## Typy modułów PAM\n1. **auth** - weryfikacja tożsamości (hasło, klucz)\n2. **account** - kontrola dostępu (ważność konta, czas)\n3. **password** - zmiana hasła\n4. **session** - setup sesji (limity, environment)\n\n## Flaga kontroli\n- **required** - musi przejść, ale kontynuuje\n- **requisite** - musi przejść, natychmiastowy fail\n- **sufficient** - jeśli przejdzie, OK (ale required nadal wymagane)\n- **optional** - ignoruj wynik\n\n## Przykład: /etc/pam.d/sshd\n```bash\nauth       required     pam_sepermit.so\nauth       substack     password-auth\nauth       include      postlogin\naccount    required     pam_nologin.so\naccount    include      password-auth\npassword   include      password-auth\nsession    include      password-auth\nsession    include      postlogin\nsession    required     pam_selinux.so close\nsession    required     pam_loginuid.so\nsession    required     pam_selinux.so open env_params\n```\n\n## Konfiguracja pam_faillock (blokowanie konta)\n```bash\n# /etc/security/faillock.conf\ndeny = 5              # Blokuj po 5 błędnych próbach\nunlock_time = 900     # Odblokuj po 15 minutach\nfail_interval = 900   # Okno czasowe: 15 minut\n\n# Sprawdź status faillock\nfaillock --user jan\n\n# Odblokuj konto\nfaillock --user jan --reset\n```\n\n### Weryfikacja:\n```bash\ncat /etc/pam.d/sshd\nfaillock --user $USER\ngrep pam_faillock /etc/pam.d/*\n```\n\n## Uwagi\n- ⚠️ Błędy w PAM mogą zablokować dostęp do systemu!\n- Zawsze testuj zmiany w osobnej sesji SSH\n- Backup oryginalnych plików przed edycją",
+    "stage": 7,
+    "exam_tag": "rhcsa",
+    "depends_on": [
+      24
+    ]
+  },
+  {
+    "id": 192,
+    "title": "PAM - Polityka Haseł i Limity",
+    "description": "Skonfiguruj politykę haseł i limity zasobów przez PAM",
+    "category": "security",
+    "difficulty": 4,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Konfiguracji polityki haseł (pam_pwquality) i limitów zasobów (pam_limits).\n\n### Wymagania:\n- Ukończone wyzwanie #191\n\n## pam_pwquality - Polityka haseł\n```bash\n# /etc/security/pwquality.conf\nminlen = 12           # Minimalna długość\nminclass = 4          # Wymagaj 4 klas znaków (upper, lower, digit, other)\ndcredit = -1          # Wymagaj min. 1 cyfry\nucredit = -1          # Wymagaj min. 1 wielkiej litery\nlcredit = -1          # Wymagaj min. 1 małej litery\nocredit = -1          # Wymagaj min. 1 znaku specjalnego\nmaxrepeat = 3         # Max 3 powtórzenia tego samego znaku\nmaxclassrepeat = 4    # Max 4 znaki z tej samej klasy\n```\n\n### Testowanie polityki\n```bash\n# Sprawdź czy hasło spełnia wymagania\npwscore <<< \"WeakPass1!\"\n# Wynik: 0 = OK, >0 = błędy\n```\n\n## pam_limits - Limity zasobów\n```bash\n# /etc/security/limits.conf\n# Format: <domain> <type> <item> <value>\n\n# Limity dla użytkownika jan\njan    hard    nofile    65536    # Max otwartych plików\njan    soft    nofile    32768\njan    hard    nproc     4096     # Max procesów\n\n# Limity dla grupy developers\n@developers    soft    memlock    1048576    # Max locked memory (KB)\n\n# Limity globalne\n*    hard    core    0               # Wyłącz core dumps\n*    soft    nproc   1024\n```\n\n### Typy limitów\n- **hard** - maksymalny limit (root może zmienić)\n- **soft** - aktualny limit (user może zmienić do hard)\n\n### Itemy limitów\n- **nofile** - max otwartych plików\n- **nproc** - max procesów\n- **memlock** - max locked memory\n- **core** - max core dump size\n- **fsize** - max file size\n\n## Sprawdź aktywne limity\n```bash\n# Dla bieżącego usera\nulimit -a\n\n# Dla konkretnego procesu\ncat /proc/<pid>/limits\n\n# Sprawdź czy limity działają\nsu - jan -c 'ulimit -n'\n```\n\n## Aktywacja pam_limits w PAM\n```bash\n# /etc/pam.d/system-auth\nsession    required     pam_limits.so\n```\n\n### Weryfikacja:\n```bash\ncat /etc/security/pwquality.conf\ncat /etc/security/limits.conf\ngrep pam_limits /etc/pam.d/*\nulimit -a\n```\n\n## Uwagi\n- Zmiany w limits.conf wymagają nowego loginu\n- `*` oznacza wszystkich użytkowników\n- `@group` oznacza grupę (z @)\n- Limity nie działają dla usług systemd (użyj LimitNOFILE= w unit file)",
+    "stage": 7,
+    "exam_tag": "rhcsa",
+    "depends_on": [
+      191
+    ]
+  },
+  {
+    "id": 193,
+    "title": "LDAP/AD - Dołączanie do Domeny z realmd",
+    "description": "Dołącz serwer RHEL do domeny Active Directory za pomocą realmd",
+    "category": "network",
+    "difficulty": 4,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Integracji RHEL z Active Directory przez realmd i SSSD.\n\n### Wymagania:\n- Dostęp do serwera AD\n- Uprawnienia admina AD\n\n## Co to jest realmd?\nrealmd to narzędzie do zarządzania przynależnością do domen (AD, FreeIPA). Automatycznie konfiguruje SSSD.\n\n## Instalacja\n```bash\ndnf install -y realmd sssd oddjob-mkhomedir adcli samba-common-tools\n```\n\n## Dołączanie do domeny\n```bash\n# 1. Sprawdź dostępność domeny\nrealm discover ad.example.com\n\n# 2. Dołącz do domeny (jako admin AD)\nrealm join ad.example.com --user=Administrator\n# Podaj hasło admina AD\n\n# 3. Zweryfikuj\nrealm list\n```\n\n## Konfiguracja SSSD\nrealmd automatycznie tworzy /etc/sssd/sssd.conf:\n```ini\n[sssd]\ndomains = ad.example.com\nconfig_file_version = 2\nservices = nss, pam\n\n[domain/ad.example.com]\nad_domain = ad.example.com\nkrb5_realm = AD.EXAMPLE.COM\nrealmd_tags = manages-system joined-with-adcli\nid_provider = ad\nfallback_homedir = /home/%u@%d\nad_gpo_access_control = permissive\n```\n\n## Uruchom SSSD\n```bash\nsystemctl enable --now sssd\nsystemctl restart sssd\n```\n\n## Testuj autentykację\n```bash\n# Sprawdź czy user AD jest widoczny\nid jan@ad.example.com\n\n# Zaloguj się jako user AD\nssh jan@ad.example.com@localhost\n```\n\n## Konfiguracja sudo dla grup AD\n```bash\n# /etc/sudoers.d/ad-admins\n%Domain\\ Admins@ad.example.com ALL=(ALL) ALL\n%Linux Admins@ad.example.com ALL=(ALL) ALL\n```\n\n## Ogranicz dostęp do domeny\n```bash\n# Pozwól tylko określonym grupom\nrealm permit --groups \"Linux Admins\" \"Developers\"\n\n# Sprawdź\nrealm permit --all\n```\n\n### Weryfikacja:\n```bash\nrealm list\nid jan@ad.example.com\ngetent passwd jan@ad.example.com\nsystemctl status sssd\n```\n\n## Uwagi\n- Wymaga poprawnej konfiguracji DNS (musi rozwiązywać AD)\n- Użyj `ad_gpo_access_control = permissive` jeśli GPO blokują dostęp\n- Home directory tworzony automatycznie przez oddjob-mkhomedir",
+    "stage": 7,
+    "exam_tag": "rhcsa",
+    "depends_on": [
+      24
+    ]
+  },
+  {
+    "id": 194,
+    "title": "SSSD - Zaawansowana Konfiguracja",
+    "description": "Skonfiguruj SSSD dla cache, offline auth i zaawansowanych opcji",
+    "category": "network",
+    "difficulty": 5,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Zaawansowanej konfiguracji SSSD dla enterprise environments.\n\n### Wymagania:\n- Ukończone wyzwanie #193\n\n## Cache i Performance\n```ini\n# /etc/sssd/sssd.conf\n[domain/ad.example.com]\n# Cache credentials (offline auth)\ncache_credentials = True\n\n# Refresh interval\nenumerate = False              # Nie listuj wszystkich userów (performance)\nentry_cache_timeout = 3600     # Cache TTL: 1 godzina\nentry_cache_nowait_percentage = 50  # Refresh w tle przy 50% TTL\n\n# Lookup timeout\nldap_search_timeout = 5\nldap_network_timeout = 3\n```\n\n## Offline Authentication\n```ini\n[domain/ad.example.com]\n# Pozwól na logowanie gdy AD jest niedostępne\noffline_credentials_expiration = 7  # dni\noffline_auth_timeout = 1            # godzina\n\n# Sprawdź status offline\nsssctl domain-status ad.example.com\n```\n\n## Mapowanie Atrybutów\n```ini\n[domain/ad.example.com]\n# Mapuj atrybuty AD na Linux\nldap_user_ssh_public_key = sshPublicKey\nldap_user_principal = userPrincipalName\n\n# Override shell\ndefault_shell = /bin/bash\n\n# Override home directory\nfallback_homedir = /home/%u\noverride_homedir = /home/%u\n```\n\n## Filtrowanie Userów/Grup\n```ini\n[domain/ad.example.com]\n# Tylko użytkownicy z określonych OU\nldap_user_search_base = OU=Linux Users,DC=ad,DC=example,DC=com\n\n# Tylko określone grupy\nldap_group_search_base = OU=Linux Groups,DC=ad,DC=example,DC=com\n\n# Wyklucz grupy\nad_gpo_ignore_unreadable = True\n```\n\n## Logowanie i Debugging\n```ini\n[sssd]\ndomain_resolution_order = ad.example.com\n\n[domain/ad.example.com]\ndebug_level = 6  # 0-9 (9 = max)\n\n# Logi w /var/log/sssd/\n# Sprawdź: tail -f /var/log/sssd/sssd_ad.example.com.log\n```\n\n## Czyszczenie Cache\n```bash\n# Wyczyść cache SSSD\nsssctl cache-remove\n\n# Lub restart\nsystemctl restart sssd\n```\n\n## Monitoring\n```bash\n# Status SSSD\nsssctl domain-status ad.example.com\n\n# Sprawdź cache\nsssctl user-checks jan@ad.example.com\n\n# Performance stats\nsssctl activity\n```\n\n### Weryfikacja:\n```bash\ncat /etc/sssd/sssd.conf\nsssctl domain-status\nsystemctl status sssd\n```\n\n## Uwagi\n- `enumerate = True` powoduje problemy z performance w dużych domenach\n- Zawsze testuj offline auth przed wdrożeniem\n- Debug level 6-9 generuje dużo logów - używaj tylko do troubleshooting",
+    "stage": 7,
+    "exam_tag": "rhcsa",
+    "depends_on": [
+      193
+    ]
+  },
+  {
+    "id": 195,
+    "title": "LDAP Client - nss-pam-ldapd",
+    "description": "Skonfiguruj klienta LDAP dla autentykacji bez Active Directory",
+    "category": "network",
+    "difficulty": 4,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Konfiguracji klienta LDAP dla centralnej autentykacji.\n\n### Wymagania:\n- Dostęp do serwera LDAP (OpenLDAP, 389 Directory Server)\n\n## Instalacja\n```bash\ndnf install -y nss-pam-ldapd authselect\n```\n\n## Konfiguracja authselect\n```bash\n# Wybierz profil z LDAP\nauthselect select sssd with-mkhomedir --force\n\n# Lub użyj authconfig (legacy)\nauthconfig --enableldap --enableldapauth --ldapserver=ldap://ldap.example.com --ldapbasedn=\"dc=example,dc=com\" --update\n```\n\n## Konfiguracja /etc/nslcd.conf\n```ini\n# /etc/nslcd.conf\nuri ldap://ldap.example.com/\nbase dc=example,dc=com\n\n# Bind credentials (jeśli wymagane)\nbinddn cn=admin,dc=example,dc=com\nbindpw SecretPassword\n\n# TLS (zalecane)\nssl start_tls\ntls_reqcert demand\ntls_cacertdir /etc/openldap/cacerts\n```\n\n## Konfiguracja /etc/nsswitch.conf\n```bash\n# /etc/nsswitch.conf\npasswd:     files sss ldap\nshadow:     files sss ldap\ngroup:      files sss ldap\n```\n\n## Testuj LDAP\n```bash\n# Sprawdź połączenie\nldapsearch -x -H ldap://ldap.example.com -b \"dc=example,dc=com\"\n\n# Sprawdź usera\nldapsearch -x -H ldap://ldap.example.com -b \"dc=example,dc=com\" \"(uid=jan)\"\n\n# Sprawdź czy nsswitch działa\ngetent passwd jan\nid jan\n```\n\n## Uruchom usługi\n```bash\nsystemctl enable --now nslcd\nsystemctl restart sssd\n```\n\n### Weryfikacja:\n```bash\ngetent passwd jan\nid jan\nsystemctl status nslcd\n```\n\n## Uwagi\n- LDAP bez TLS przesyła hasła plaintext!\n- Użyj LDAPS (port 636) lub StartTLS\n- SSSD jest preferowany nad nslcd w RHEL 9",
+    "stage": 7,
+    "exam_tag": "rhcsa",
+    "depends_on": [
+      193
+    ]
+  },
+  {
+    "id": 196,
+    "title": "sysstat - sar (System Activity Reporter)",
+    "description": "Analizuj historyczne metryki wydajności systemu za pomocą sar",
+    "category": "system",
+    "difficulty": 3,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Użycia sar do analizy historycznej wydajności CPU, RAM, disk i network.\n\n### Wymagania:\n- Zainstalowany sysstat\n\n## Instalacja\n```bash\ndnf install -y sysstat\nsystemctl enable --now sysstat\n```\n\n## Podstawowe użycie\n```bash\n# CPU usage (ostatni dzień)\nsar -u\n\n# CPU co 1 sekundę, 5 razy\nsar -u 1 5\n\n# Pamięć\nsar -r\n\n# Swap\nsar -S\n\n# Disk I/O\nsar -d\n\n# Network\nsar -n DEV\n\n# Load average\nsar -q\n```\n\n## Historyczne dane\n```bash\n# Dane z konkretnego dnia\nsar -u -f /var/log/sa/sa15\n\n# Wszystkie pliki sa*\nls -la /var/log/sa/\n\n# CPU z 15-tego dnia miesiąca\nsar -u -f /var/log/sa/sa15\n```\n\n## Przydatne opcje\n```bash\n# Wszystkie metryki naraz\nsar -A\n\n# CPU per core\nsar -P ALL\n\n# Network errors\nsar -n EDEV\n\n# Process creation\nsar -w\n```\n\n## Przykład analizy\n```bash\n# Sprawdź CPU w godzinach 10-11\nsar -u -f /var/log/sa/sa15 -s 10:00:00 -e 11:00:00\n\n# Sprawdź disk I/O wczoraj\nsar -d -f /var/log/sa/sa$(date -d yesterday +%d)\n```\n\n### Weryfikacja:\n```bash\nsar -u 1 3\nls /var/log/sa/\nsystemctl status sysstat\n```\n\n## Uwagi\n- sysstat zbiera dane co 10 minut (domyślnie)\n- Dane przechowywane 7 dni (konfigurowalne w /etc/sysstat/sysstat)\n- sar nie działa jeśli sysstat nie jest uruchomiony",
+    "stage": 7,
+    "exam_tag": "rhcsa",
+    "depends_on": [
+      4
+    ]
+  },
+  {
+    "id": 197,
+    "title": "sysstat - vmstat, iostat, pidstat",
+    "description": "Używaj vmstat, iostat i pidstat do real-time diagnostyki wydajności",
+    "category": "system",
+    "difficulty": 3,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Real-time monitoringu wydajności za pomocą vmstat, iostat i pidstat.\n\n### Wymagania:\n- Ukończone wyzwanie #196\n\n## vmstat - Virtual Memory Statistics\n```bash\n# Podstawowe użycie\nvmstat\n\n# Co 1 sekundę, 5 razy\nvmstat 1 5\n\n# Szczegółowe (w tym disk)\nvmstat -d\n\n# Partycje\nvmstat -p /dev/sda1\n```\n\n### Interpretacja vmstat\n```\nprocs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----\n r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st\n 1  0      0 123456  78901 234567    0    0    10    20  100  200  5  2 93  0  0\n```\n- **r** - procesy w runqueue\n- **b** - procesy blocked (I/O wait)\n- **us/sy/id/wa** - CPU user/system/idle/wait\n- **si/so** - swap in/out\n\n## iostat - I/O Statistics\n```bash\n# Podstawowe\niostat\n\n# Co 1 sekundę, 5 razy\niostat 1 5\n\n# Rozszerzone (extended)\niostat -x\n\n# Tylko disk\niostat -d\n\n# Human readable\niostat -h\n```\n\n### Interpretacja iostat\n```\nDevice   r/s   w/s   rkB/s   wkB/s  rrqm/s  wrqm/s  %util\nsda      10    20    100     200     0       0       15.50\n```\n- **%util** > 80% = bottleneck!\n- **r/s, w/s** - reads/writes per second\n- **rkB/s, wkB/s** - throughput\n\n## pidstat - Process Statistics\n```bash\n# Wszystkie procesy\npidstat\n\n# Co 1 sekundę, 5 razy\npidstat 1 5\n\n# Tylko CPU\npidstat -u\n\n# Tylko I/O\npidstat -d\n\n# Tylko memory\npidstat -r\n\n# Konkretny PID\npidstat -p 1234\n```\n\n### Interpretacja pidstat\n```\n10:00:00  UID  PID  %usr  %system  %guest  %wait  %CPU  CPU  Command\n10:00:01    0    1   0.00     0.00    0.00   0.00  0.00    0  systemd\n```\n- **%usr** - CPU time w user space\n- **%system** - CPU time w kernel\n- **%wait** - time waiting for CPU\n\n## Przykład diagnostyki\n```bash\n# 1. Sprawdź ogólny load\nvmstat 1 10\n\n# 2. Jeśli high I/O wait, sprawdź disk\niostat -x 1 10\n\n# 3. Znajdź proces odpowiedzialny\npidstat -d 1 10\n```\n\n### Weryfikacja:\n```bash\nvmstat 1 3\niostat -x 1 3\npidstat -u 1 3\n```\n\n## Uwagi\n- vmstat pokazuje averages od bootu (pierwsza linia)\n- iostat %util > 80% oznacza saturację dysku\n- pidstat wymaga root dla niektórych procesów",
+    "stage": 7,
+    "exam_tag": "rhcsa",
+    "depends_on": [
+      196
+    ]
+  },
+  {
+    "id": 198,
+    "title": "Btrfs - Subvolumes i Snapshots",
+    "description": "Używaj Btrfs subvolumes i snapshots dla elastycznego zarządzania storage",
+    "category": "system",
+    "difficulty": 4,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Zaawansowanego zarządzania Btrfs: subvolumes, snapshots, compression.\n\n### Wymagania:\n- Zainstalowany btrfs-progs\n\n## Instalacja\n```bash\ndnf install -y btrfs-progs\n```\n\n## Tworzenie filesystem Btrfs\n```bash\n# Na jednej partycji\nmkfs.btrfs /dev/sda2\n\n# RAID 1 (mirror)\nmkfs.btrfs -d raid1 -m raid1 /dev/sda /dev/sdb\n\n# Montuj\nmount /dev/sda2 /mnt/btrfs\n```\n\n## Subvolumes\nSubvolume to niezależny filesystem wewnątrz Btrfs.\n\n```bash\n# Lista subvolumes\nbtrfs subvolume list /mnt/btrfs\n\n# Utwórz subvolume\nbtrfs subvolume create /mnt/btrfs/@home\nbtrfs subvolume create /mnt/btrfs/@var\n\n# Montuj subvolume\nmount -o subvol=@home /dev/sda2 /home\n\n# Lub w /etc/fstab\n# /dev/sda2 /home btrfs subvol=@home 0 0\n```\n\n## Snapshots\nSnapshot to read-only kopia subvolume w danym momencie.\n\n```bash\n# Utwórz snapshot\nbtrfs subvolume snapshot /mnt/btrfs/@home /mnt/btrfs/@home-snapshot-$(date +%Y%m%d)\n\n# Read-only snapshot (dla backup)\nbtrfs subvolume snapshot -r /mnt/btrfs/@home /mnt/btrfs/@home-ro-$(date +%Y%m%d)\n\n# Lista snapshots\nbtrfs subvolume list -r /mnt/btrfs\n\n# Usuń snapshot\nbtrfs subvolume delete /mnt/btrfs/@home-snapshot-20250115\n```\n\n## Compression\n```bash\n# Montuj z compression\nmount -o compress=zstd /dev/sda2 /mnt/btrfs\n\n# Lub w /etc/fstab\n# /dev/sda2 /mnt/btrfs btrfs compress=zstd 0 0\n\n# Compression level (1-15, wyższy = wolniejszy ale lepszy)\nmount -o compress=zstd:15 /dev/sda2 /mnt/btrfs\n```\n\n## Quota (ograniczenie rozmiaru subvolume)\n```bash\n# Włącz quota\nbtrfs quota enable /mnt/btrfs\n\n# Ustaw limit dla subvolume\nbtrfs qgroup limit 10G /mnt/btrfs/@home\n\n# Sprawdź quota\nbtrfs qgroup show /mnt/btrfs\n```\n\n## Defragmentacja\n```bash\n# Defrag cały filesystem\nbtrfs filesystem defragment /mnt/btrfs\n\n# Defrag konkretny plik\nbtrfs filesystem defragment /mnt/btrfs/@home/user/bigfile.iso\n```\n\n## Balance (reorganizacja danych)\n```bash\n# Sprawdź status\nbtrfs balance status /mnt/btrfs\n\n# Balance (uwaga: czasochłonne!)\nbtrfs balance start /mnt/btrfs\n\n# Balance tylko nieużywane chunki\nbtrfs balance start -dusage=0 /mnt/btrfs\n```\n\n### Weryfikacja:\n```bash\nbtrfs subvolume list /mnt/btrfs\nbtrfs filesystem show\nbtrfs filesystem df /mnt/btrfs\n```\n\n## Uwagi\n- Snapshots są natychmiastowe (copy-on-write)\n- Btrfs RAID 5/6 jest eksperymentalny - nie używaj w production!\n- Compression oszczędza miejsce ale zwiększa CPU usage\n- Balance może trwać godziny na dużych filesystemach",
+    "stage": 7,
+    "exam_tag": "extra",
+    "depends_on": [
+      8
+    ]
+  },
+  {
+    "id": 199,
+    "title": "rpmbuild + createrepo - Custom Packages",
+    "description": "Buduj własne pakiety RPM i twórz lokalne repozytorium",
+    "category": "system",
+    "difficulty": 4,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Tworzenia custom RPM packages i lokalnego repozytorium YUM/DNF.\n\n### Wymagania:\n- Zainstalowany rpm-build\n\n## Instalacja\n```bash\ndnf install -y rpm-build rpmdevtools createrepo\n```\n\n## Setup środowiska\n```bash\n# Utwórz strukturę katalogów\nrpmdev-setuptree\n\n# Struktura:\n# ~/rpmbuild/\n#   ├── BUILD/\n#   ├── RPMS/\n#   ├── SOURCES/\n#   ├── SPECS/\n#   └── SRPMS/\n```\n\n## Tworzenie spec file\n```bash\n# Utwórz spec file\nrpmdev-newspec myapp\n\n# Edytuj ~/rpmbuild/SPECS/myapp.spec\n```\n\n### Przykład spec file\n```spec\nName:           myapp\nVersion:        1.0.0\nRelease:        1%{?dist}\nSummary:        My custom application\nLicense:        MIT\nURL:            https://example.com\nSource0:        %{name}-%{version}.tar.gz\n\nBuildRequires:  gcc make\nRequires:       glibc\n\n%description\nMy custom application description.\n\n%prep\n%setup -q\n\n%build\nmake %{?_smp_mflags}\n\n%install\nmake install DESTDIR=%{buildroot}\n\n%files\n/usr/local/bin/myapp\n/etc/myapp/myapp.conf\n\n%changelog\n* Wed Jan 15 2025 Your Name <your.email@example.com> - 1.0.0-1\n- Initial package\n```\n\n## Budowanie RPM\n```bash\n# Umieść source tarball w SOURCES/\ncp myapp-1.0.0.tar.gz ~/rpmbuild/SOURCES/\n\n# Zbuduj RPM\nrpmbuild -ba ~/rpmbuild/SPECS/myapp.spec\n\n# Tylko binary RPM\nrpmbuild -bb ~/rpmbuild/SPECS/myapp.spec\n\n# Tylko source RPM\nrpmbuild -bs ~/rpmbuild/SPECS/myapp.spec\n```\n\n## Wyniki\n```\n~/rpmbuild/RPMS/x86_64/myapp-1.0.0-1.el9.x86_64.rpm\n~/rpmbuild/SRPMS/myapp-1.0.0-1.el9.src.rpm\n```\n\n## Tworzenie lokalnego repozytorium\n```bash\n# Utwórz katalog\nmkdir -p /var/www/html/repo\n\n# Kopiuj RPM\ncp ~/rpmbuild/RPMS/x86_64/*.rpm /var/www/html/repo/\n\n# Utwórz metadane repo\ncreaterepo /var/www/html/repo/\n\n# Uruchom HTTP server\ndnf install -y httpd\nsystemctl enable --now httpd\n```\n\n## Konfiguracja klienta\n```bash\n# /etc/yum.repos.d/local.repo\n[local-repo]\nname=Local Repository\nbaseurl=http://localhost/repo/\nenabled=1\ngpgcheck=0\n```\n\n## Testuj repo\n```bash\ndnf clean all\ndnf repolist\ndnf install myapp\n```\n\n### Weryfikacja:\n```bash\nrpm -q myapp\nrpm -qi myapp\nrpm -ql myapp\n```\n\n## Uwagi\n- Zawsze testuj RPM w clean environment (VM/container)\n- Używaj mock dla budowania w isolated environment\n- Podpisuj RPM przez rpm --addsign (wymaga GPG key)",
+    "stage": 7,
+    "exam_tag": "extra",
+    "depends_on": [
+      23
+    ]
+  },
+  {
+    "id": 200,
+    "title": "Centralized Logging - Remote rsyslog",
+    "description": "Skonfiguruj centralne zbieranie logów przez rsyslog",
+    "category": "system",
+    "difficulty": 4,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Konfiguracji centralnego logowania przez rsyslog (server i client).\n\n### Wymagania:\n- Zainstalowany rsyslog\n\n## Architektura\n```\nClient1 ──┐\nClient2 ──┼──> Log Server (rsyslog) ──> /var/log/remote/\nClient3 ──┘\n```\n\n## Konfiguracja Log Server\n```bash\n# /etc/rsyslog.conf (lub /etc/rsyslog.d/remote.conf)\n\n# Załaduj moduły\nmodule(load=\"imtcp\")  # TCP input\nmodule(load=\"imudp\")  # UDP input\n\n# Nasłuchuj na portach\ninput(type=\"imtcp\" port=\"514\")\ninput(type=\"imudp\" port=\"514\")\n\n# Template dla nazw plików per host\ntemplate(name=\"RemoteLogs\" type=\"string\"\n    string=\"/var/log/remote/%HOSTNAME%/%PROGRAMNAME%.log\")\n\n# Zapisuj logi z klientów\nif $fromhost-ip != '127.0.0.1' then {\n    action(type=\"omfile\" dynaFile=\"RemoteLogs\")\n    stop\n}\n```\n\n## Firewall na serverze\n```bash\nfirewall-cmd --add-service=syslog --permanent\nfirewall-cmd --reload\n```\n\n## SELinux\n```bash\nsetsebool -P logging_syslogd_use_tcp on\n```\n\n## Restart rsyslog\n```bash\nsystemctl restart rsyslog\n```\n\n## Konfiguracja Klienta\n```bash\n# /etc/rsyslog.d/remote.conf\n\n# Wysyłaj wszystkie logi przez TCP\n*.* @@logserver.example.com:514\n\n# Lub UDP (szybszy, ale mniej niezawodny)\n# *.* @logserver.example.com:514\n\n# Lub tylko określone facility\nauthpriv.* @@logserver.example.com:514\n```\n\n## Restart klienta\n```bash\nsystemctl restart rsyslog\n```\n\n## Testuj\n```bash\n# Na kliencie\nlogger \"Test message from client\"\n\n# Na serverze\ntail -f /var/log/remote/client-hostname/rsyslog.log\n```\n\n## Rotacja logów\n```bash\n# /etc/logrotate.d/remote\n/var/log/remote/*/*.log {\n    daily\n    rotate 30\n    compress\n    delaycompress\n    missingok\n    notifempty\n    create 0640 root root\n}\n```\n\n### Weryfikacja:\n```bash\n# Server\nnetstat -tlnp | grep 514\nls -la /var/log/remote/\n\n# Klient\ncat /etc/rsyslog.d/remote.conf\nlogger \"Test message\"\n```\n\n## Uwagi\n- TCP (@@) jest niezawodny, UDP (@) jest szybszy\n- Szyfruj przez TLS (omssl module) w production\n- Rozważ ELK stack (Elasticsearch, Logstash, Kibana) dla dużych środowisk",
+    "stage": 7,
+    "exam_tag": "extra",
+    "depends_on": [
+      11
+    ]
+  },
+  {
+    "id": 201,
+    "title": "Quota Management - User/Group Quotas",
+    "description": "Skonfiguruj limity dyskowe dla użytkowników i grup",
+    "category": "system",
+    "difficulty": 3,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Konfiguracji quota management dla XFS i ext4.\n\n### Wymagania:\n- Filesystem XFS lub ext4\n\n## XFS Quota\n### Montuj z quota\n```bash\n# /etc/fstab\n/dev/sda2 /home xfs defaults,uquota,gquota 0 0\n\n# Lub remount\nmount -o remount,uquota,gquota /home\n```\n\n### Konfiguracja quota\n```bash\n# Ustaw quota dla usera\nxfs_quota -x -c 'limit bsoft=5G bhard=6G jan' /home\n\n# Ustaw quota dla grupy\nxfs_quota -x -c 'limit -g bsoft=10G bhard=12G developers' /home\n\n# Sprawdź quota\nxfs_quota -x -c 'report -h' /home\n\n# Sprawdź dla konkretnego usera\nxfs_quota -x -c 'quota -h jan' /home\n```\n\n### Typy limitów\n- **bsoft** - soft limit (po przekroczeniu: grace period)\n- **bhard** - hard limit (bezwzględny)\n- **isoft/ihard** - inode quota (liczba plików)\n\n### Grace period\n```bash\n# Ustaw grace period\nxfs_quota -x -c 'timer -u 7days' /home\n\n# Sprawdź\nxfs_quota -x -c 'state' /home\n```\n\n## ext4 Quota\n### Instalacja\n```bash\ndnf install -y quota\n```\n\n### Montuj z quota\n```bash\n# /etc/fstab\n/dev/sda2 /home ext4 defaults,usrquota,grpquota 0 0\n\n# Remount\nmount -o remount /home\n```\n\n### Inicjalizacja quota\n```bash\n# Skanuj filesystem\nquotacheck -cugm /home\n\n# Włącz quota\nquotaon /home\n```\n\n### Konfiguracja quota\n```bash\n# Edytuj quota (interaktywnie)\nedquota jan\n\n# Lub ustaw bezpośrednio\nsetquota jan 5G 6G 0 0 /home\n\n# Sprawdź\nquota -u jan\nrepquota /home\n```\n\n### Przykład edquota\n```\nDisk quotas for user jan (uid 1000):\n  Filesystem                   space       soft       hard     inodes     soft     hard\n  /dev/sda2                    1024M       5120M      6144M        100        0        0\n```\n\n## Monitoring\n```bash\n# Sprawdź quota wszystkich userów\nrepquota -a\n\n# Sprawdź przekroczenia\nrepquota -a | grep +\n\n# Sprawdź dla usera\nquota -v jan\n```\n\n### Weryfikacja:\n```bash\nxfs_quota -x -c 'report -h' /home\nrepquota /home\nmount | grep quota\n```\n\n## Uwagi\n- XFS quota jest wbudowane, ext4 wymaga quota tools\n- Quota nie działa na NFS bez specjalnej konfiguracji\n- Grace period daje czas na cleanup po przekroczeniu soft limit",
+    "stage": 7,
+    "exam_tag": "extra",
+    "depends_on": [
+      8
+    ]
+  },
+  {
+    "id": 202,
+    "title": "Multipath I/O - High Availability Storage",
+    "description": "Skonfiguruj device-mapper-multipath dla redundantnych ścieżek do SAN",
+    "category": "system",
+    "difficulty": 5,
+    "completed": false,
+    "details": "**Czego się nauczysz:** Konfiguracji multipath I/O dla high availability storage (SAN).\n\n### Wymagania:\n- Dostęp do SAN (iSCSI, Fibre Channel)\n- Minimum 2 ścieżki do storage\n\n## Instalacja\n```bash\ndnf install -y device-mapper-multipath\n```\n\n## Generowanie konfiguracji\n```bash\n# Utwórz domyślny config\nmpathconf --enable --with_multipathd y\n\n# Lub ręcznie\nmpathconf --enable\n```\n\n## Konfiguracja /etc/multipath.conf\n```ini\ndefaults {\n    polling_interval      10\n    path_selector         \"round-robin 0\"\n    path_grouping_policy  multibus\n    uid_attrs             \"sd:ID_SERIAL\"\n    rr_min_io             100\n    failback              immediate\n    no_path_retry         5\n}\n\nblacklist {\n    devnode \"^sd[a-z]\"  # Wyklucz lokalne dyski\n}\n\ndevices {\n    device {\n        vendor                  \"NETAPP\"\n        product                 \"LUN\"\n        path_grouping_policy    group_by_prio\n        path_selector           \"round-robin 0\"\n        rr_weight               uniform\n        failback                immediate\n        hardware_handler        \"1 alua\"\n        prio                    alua\n    }\n}\n```\n\n## Restart multipathd\n```bash\nsystemctl restart multipathd\nsystemctl enable multipathd\n```\n\n## Sprawdź status\n```bash\n# Lista multipath devices\nmultipath -ll\n\n# Szczegółowe info\nmultipathd show paths\nmultipathd show maps\n\n# Flush (usuń) device\nmultipath -f mpatha\n\n# Reconfigure\nmultipathd reconfigure\n```\n\n## Przykład output\n```\nmpatha (3600a0980383039732f3f48683339d846) dm-2 NETAPP,LUN\nsize=100G features='2 queue_if_no_path retain_attached_hw_handler' hwhandler='1 alua' wp=rw\n|-+- policy='round-robin 0' prio=50 status=active\n| `- 2:0:0:0 sdb 8:16  active ready running\n`-+- policy='round-robin 0' prio=10 status=enabled\n  `- 3:0:0:0 sdc 8:32  active ready running\n```\n\n## Użycie multipath device\n```bash\n# Utwórz PV na multipath device\npvcreate /dev/mapper/mpatha\n\n# Lub użyj UUID w /etc/fstab\n# /dev/disk/by-id/dm-uuid-mpath-3600a0980383039732f3f48683339d846 /mnt/san xfs defaults 0 0\n```\n\n### Weryfikacja:\n```bash\nmultipath -ll\nsystemctl status multipathd\ncat /etc/multipath.conf\nlsblk | grep mpath\n```\n\n## Uwagi\n- Multipath wymaga minimum 2 ścieżek (HBA/paths)\n- `no_path_retry` określa ile prób przed fail\n- Używaj ALUA (Asymmetric Logical Unit Access) dla active/passive SAN\n- Testuj failover przez wyłączenie jednej ścieżki",
+    "stage": 7,
+    "exam_tag": "extra",
+    "depends_on": [
+      8
+    ]
   }
 ]
