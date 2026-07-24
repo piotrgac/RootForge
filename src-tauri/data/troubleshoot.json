@@ -1,0 +1,352 @@
+[
+  {
+    "id": 1,
+    "title": "Apache nie startuje",
+    "category": "system",
+    "difficulty": 2,
+    "completed": false,
+    "scenario": "Po instalacji httpd probujesz uruchomic usluge, ale systemctl status httpd pokazuje 'failed'. Logi journalctl mowia 'Permission denied' na /var/www/html. Jaki jest problem?",
+    "hints": [
+      "Sprawdz kontekst SELinux katalogu",
+      "Uzyj ls -Z zeby zobaczyc kontekst",
+      "Sprawdz domyslny kontekst dla httpd_sys_content_t"
+    ],
+    "solution": "Problem: zly kontekst SELinux. Rozwiazanie: restorecon -R /var/www/html lub semanage fcontext -a -t httpd_sys_content_t + restorecon"
+  },
+  {
+    "id": 2,
+    "title": "Nie moge sie zalogowac przez SSH",
+    "category": "network",
+    "difficulty": 2,
+    "completed": false,
+    "scenario": "Skonfigurowales SSH na nowym serwerze. Z klienta dostajesz 'Permission denied (publickey)'. Klucz publiczny jest w authorized_keys. Co jest nie tak?",
+    "hints": [
+      "Sprawdz uprawnienia katalogu .ssh (powinien byc 700)",
+      "Sprawdz uprawnienia authorized_keys (powinien byc 600)",
+      "Sprawdz logi SELinux: ausearch -m AVC"
+    ],
+    "solution": "Problem: zle uprawnienia. Rozwiazanie: chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys. Jesli SELinux blokuje: restorecon -R -v ~/.ssh"
+  },
+  {
+    "id": 3,
+    "title": "Dysk sie wypelnia - gdzie szukac?",
+    "category": "system",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Otrzymujesz alert 'No space left on device' na partycji /. df -h pokazuje 100%. du -sh /* nie sumuje sie do calkowitego rozmiaru. Gdzie jest brakujace miejsce?",
+    "hints": [
+      "Sprawdz lsof | grep deleted - otwarte usuniete pliki",
+      "Sprawdz czy proces trzyma uchwyt do usunietego pliku",
+      "Zrestartuj usluge ktora trzyma uchwyt"
+    ],
+    "solution": "Problem: proces trzyma uchwyt do usunietego pliku. df pokazuje zajete, ale du juz nie widzi. Rozwiazanie: znajdz PID przez lsof | grep deleted i zrestartuj proces."
+  },
+  {
+    "id": 4,
+    "title": "firewalld blokuje ruch mimo otwartego portu",
+    "category": "network",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Otworzyles port 8080 w firewalld i zrobiles reload. Z innej maszyny curl do portu 8080 nie dziala. firewall-cmd --list-all pokazuje port na liscie. Co blokuje?",
+    "hints": [
+      "Sprawdz czy usluga nasluchuje na 0.0.0.0 czy localhost",
+      "Sprawdz SELinux - moze blokowac",
+      "Uzyj ss -tlnp | grep 8080"
+    ],
+    "solution": "Problem: usluga nasluchuje na 127.0.0.1 zamiast 0.0.0.0 lub SELinux blokuje. Rozwiazanie: sprawdz 'ss -tlnp | grep 8080', zmien bind address w konfiguracji."
+  },
+  {
+    "id": 5,
+    "title": "Uzytkownik nie moze uzyc sudo",
+    "category": "security",
+    "difficulty": 2,
+    "completed": false,
+    "scenario": "Dodales uzytkownika jan do grupy wheel (usermod -aG wheel jan). Jan loguje sie ponownie, ale sudo whoami zwraca 'jan is not in the sudoers file'. Gdzie jest blad?",
+    "hints": [
+      "Sprawdz czy jan jest w grupie wheel (groups jan)",
+      "Sprawdz plik /etc/sudoers przez visudo",
+      "Sprawdz czy grupa wheel ma wpis w sudoers"
+    ],
+    "solution": "Problem: albo user nie jest w grupie (wyloguj/zaloguj) albo grupa wheel nie ma wpisu w sudoers. Rozwiazanie: dodaj '%wheel ALL=(ALL) ALL' przez visudo."
+  },
+  {
+    "id": 6,
+    "title": "Klient nie moze polaczyc sie z baza",
+    "category": "network",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Aplikacja na serwerze A nie moze polaczyc sie z MySQL na serwerze B (port 3306). Firewall na B ma otwarty port 3306. Jak zdiagnozowac problem?",
+    "hints": [
+      "Sprawdz czy port jest otwarty z zewnatrz (nc -zv)",
+      "Sprawdz czy MySQL nasluchuje na wszystkich interfejsach",
+      "Uzyj ss -tlnp na serwerze B"
+    ],
+    "solution": "Uzyj 'nc -zv server-b 3306' z serwera A. Jesli timeout - firewall lub MySQL nasluchuje tylko na localhost. Sprawdz 'ss -tlnp | grep 3306' na B."
+  },
+  {
+    "id": 7,
+    "title": "LVM - brak miejsca w volume group",
+    "category": "system",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Chcesz zwiekszyc rozmiar logical volume, ale vgs pokazuje brak free space w VG. Masz wolny dysk /dev/sdc. Jak dodac go do VG i rozszerzyc LV?",
+    "hints": [
+      "Dodaj dysk do VG przez vgextend",
+      "Potem rozszerz LV przez lvextend",
+      "Potem rozszerz system plikow - xfs_growfs lub resize2fs"
+    ],
+    "solution": "1. pvcreate /dev/sdc 2. vgextend rootvg /dev/sdc 3. lvextend -L +10G /dev/rootvg/rootlv 4. xfs_growfs / (dla XFS) lub resize2fs (dla ext4)"
+  },
+  {
+    "id": 8,
+    "title": "Usluga nie chce sie uruchomic po reboot",
+    "category": "system",
+    "difficulty": 1,
+    "completed": false,
+    "scenario": "Skonfigurowales Nginx i uruchomiles 'systemctl start nginx'. Dziala. Ale po reboot serwera Nginx nie startuje. W czym problem?",
+    "hints": [
+      "Sprawdz czy usluga jest enabled",
+      "Uzyj systemctl is-enabled nginx",
+      "Uzyj systemctl enable --now nginx"
+    ],
+    "solution": "Problem: nie wlaczyles autostartu. 'systemctl start' uruchamia tylko teraz, nie po reboot. Rozwiazanie: systemctl enable nginx"
+  },
+  {
+    "id": 9,
+    "title": "NFS mount - permission denied mimo praw",
+    "category": "network",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Zamontowales udzial NFS. ls -l pokazuje rwx dla wszystkich, ale nie mozesz utworzyc pliku. 'touch test' zwraca 'Permission denied'. Co blokuje?",
+    "hints": [
+      "Sprawdz opcje no_root_squash w /etc/exports",
+      "Sprawdz UID/GID miedzy serwerem a klientem",
+      "Sprawdz SELinux: ausearch -m AVC"
+    ],
+    "solution": "Problem: root_squash lub inne UID lub SELinux. Rozwiazanie: dodaj 'no_root_squash' do eksportu (jesli root) lub setsebool -P nfs_export_all_rw on"
+  },
+  {
+    "id": 10,
+    "title": "Chronyd nie synchronizuje czasu",
+    "category": "system",
+    "difficulty": 2,
+    "completed": false,
+    "scenario": "Uruchomiles chronyd. 'chronyc tracking' pokazuje 'Cannot talk to host: Network is unreachable'. Siec dziala (ping 8.8.8.8 chodzi). Co jest nie tak?",
+    "hints": [
+      "Sprawdz /etc/chrony.conf",
+      "Sprawdz czy pool/server jest poprawnie wpisany",
+      "Sprawdz firewall (port 123/udp)"
+    ],
+    "solution": "Problem: bledny wpis serwera w chrony.conf lub firewall blokuje port 123. Rozwiazanie: dodaj 'pool 2.rhel.pool.ntp.org iburst' i systemctl restart chronyd"
+  },
+  {
+    "id": 11,
+    "title": "DNF module - konflikt wersji",
+    "category": "system",
+    "difficulty": 4,
+    "completed": false,
+    "scenario": "Probojesz zainstalowac PostgreSQL 15 przez 'dnf module enable postgresql:15', ale system mowi 'would result in removing protected packages'. Jak zainstalowac nowa wersje?",
+    "hints": [
+      "Sprawdz aktualnie aktywny strumien modulu",
+      "Zresetuj modul przed wlaczeniem nowego",
+      "dnf module reset postgresql"
+    ],
+    "solution": "Problem: stary strumien jest aktywny. Rozwiazanie: 'dnf module reset postgresql', potem 'dnf module enable postgresql:15', potem 'dnf install postgresql-server'"
+  },
+  {
+    "id": 12,
+    "title": "Kontener Podman nie widzi plikow z hosta",
+    "category": "devops",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Uruchomiles kontener z montowaniem: podman run -v /host-data:/container-data nginx. W kontenerze katalog jest pusty, mimo ze na hoscie sa pliki. Co jest nie tak?",
+    "hints": [
+      "Sprawdz czy uzylej flagi :Z przy montowaniu",
+      "Sprawdz uprawnienia katalogu zrodlowego",
+      "Sprawdz czy SELinux nie blokuje"
+    ],
+    "solution": "SELinux blokuje dostep. Uzyj flagi :Z: podman run -v /host-data:/container-data:Z nginx. Dla rootless sprawdz czy user ma dostep do katalogu."
+  },
+  {
+    "id": 13,
+    "title": "auditd nie loguje zdarzen",
+    "category": "security",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Dodales regule: auditctl -w /etc/passwd -p wa -k passwd_changes. Po zmianie hasla 'ausearch -k passwd_changes' nie zwraca nic. Dlaczego?",
+    "hints": [
+      "Sprawdz czy auditd jest uruchomiony",
+      "Sprawdz reguly auditctl -l",
+      "Sprawdz czy zmiana przez odpowiedni proces"
+    ],
+    "solution": "Problem: auditd nie dziala lub regula nie zaladowana. Rozwiazanie: systemctl restart auditd, auditctl -R /etc/audit/rules.d/custom.rules"
+  },
+  {
+    "id": 14,
+    "title": "GRUB - system nie bootuje po zmianie",
+    "category": "system",
+    "difficulty": 4,
+    "completed": false,
+    "scenario": "Dodales parametr do GRUB_CMDLINE_LINUX, uruchomiles grub2-mkconfig, ale po reboot system sie zawiesza. Jak odzyskac system?",
+    "hints": [
+      "Edytuj parametry bootowania z GRUB menu (nacisnij e)",
+      "Usun problematyczny parametr i bootuj",
+      "Po wejsciu napraw /etc/default/grub"
+    ],
+    "solution": "Podczas bootu nacisnij e przy wpisie jadra. Znajdz linie linux, usun problematyczny parametr. Ctrl+X bootuj. Po wejsciu napraw grub.cfg i uruchom dracut --force."
+  },
+  {
+    "id": 15,
+    "title": "SELinux - usluga nie czyta pliku mimo praw 644",
+    "category": "security",
+    "difficulty": 2,
+    "completed": false,
+    "scenario": "Apache zwraca 403 Forbidden. Plik ma uprawnienia 644 i nalezy do apache. ls -Z pokazuje 'admin_home_t'. Dlaczego SELinux blokuje?",
+    "hints": [
+      "Sprawdz kontekst SELinux pliku (ls -Z)",
+      "Porownaj z domyslnym kontekstem dla /var/www/html",
+      "Uzyj restorecon lub semanage fcontext"
+    ],
+    "solution": "Plik ma kontekst admin_home_t zamiast httpd_sys_content_t. Rozwiazanie: restorecon -R /sciezka lub semanage fcontext + restorecon"
+  },
+  {
+    "id": 16,
+    "title": "Nie moge zamontowac NFS - access denied",
+    "category": "network",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Probojesz zamontowac NFS: mount -t nfs server:/export /mnt. Dostajesz 'access denied by server'. /etc/exports wyglada dobrze. Co blokuje?",
+    "hints": [
+      "Sprawdz opcje w /etc/exports - szczegolnie siec docelowa",
+      "Sprawdz firewall na serwerze (porty NFS)",
+      "Sprawdz exportfs -v"
+    ],
+    "solution": "Zla siec w /etc/exports lub brak portow NFS w firewall. Rozwiazanie: popraw subnet w eksporcie, firewall-cmd --add-service=nfs"
+  },
+  {
+    "id": 17,
+    "title": "systemd timer nie odpala skryptu",
+    "category": "system",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Stworzyles systemd timer i service. 'systemctl start backup.service' dziala. Ale timer nie odpala uslugi o czasie. 'systemctl list-timers' pokazuje timer. Co jest nie tak?",
+    "hints": [
+      "Sprawdz czy timer jest enabled",
+      "Sprawdz skladnie OnCalendar",
+      "Sprawdz logi: journalctl -u backup.timer"
+    ],
+    "solution": "Timer nie jest enabled. Rozwiazanie: systemctl enable --now backup.timer. Przyklad: [Timer] OnCalendar=daily 02:00:00 Persistent=true"
+  },
+  {
+    "id": 18,
+    "title": "Stratis pool - nie moge utworzyc FS",
+    "category": "system",
+    "difficulty": 4,
+    "completed": false,
+    "scenario": "Utworzyles: stratis pool create mypool /dev/sdb. Ale 'stratis filesystem create mypool fs1' zwraca 'insufficient space'. Dlaczego przy pelnym dysku?",
+    "hints": [
+      "Sprawdz rozmiar dysku (powinien byc > 1GB)",
+      "Stratis potrzebuje miejsca na metadane",
+      "Sprawdz stratis pool list i stratis blockdev list"
+    ],
+    "solution": "Dysk jest za maly. Stratis potrzebuje min 1 GB na metadane. Dodaj drugi dysk: stratis pool add-data mypool /dev/sdc, potem utworz FS."
+  },
+  {
+    "id": 19,
+    "title": "cron - skrypt nie dziala, ale recznie tak",
+    "category": "system",
+    "difficulty": 2,
+    "completed": false,
+    "scenario": "Dodales wpis do crontab: '0 3 * * * /usr/local/bin/backup.sh'. Reczne wykonanie dziala. O 3:00 skrypt sie nie wykonuje. Logi cron pokazuja CMD bez bledu. Dlaczego?",
+    "hints": [
+      "Cron ma ograniczone PATH",
+      "Uzywaj pelnych sciezek w skrypcie",
+      "Zmienne srodowiskowe nie sa dostepne w cron"
+    ],
+    "solution": "Cron nie ma PATH jak user. W skrypcie ustaw PATH: '#!/bin/bash\\nPATH=/usr/local/bin:/usr/bin:/usr/sbin\\nexport PATH' lub uzywaj pelnych sciezek."
+  },
+  {
+    "id": 20,
+    "title": "Vim - E212: Can't open file for writing",
+    "category": "linux",
+    "difficulty": 1,
+    "completed": false,
+    "scenario": "Edytujesz plik konfiguracyjny w Vimie. Probojesz zapisac ':w', ale dostajesz 'E212: Can't open file for writing'. Jesteś zalogowany jako zwykly uzytkownik. Jak zapisac?",
+    "hints": [
+      "Brak uprawnien do zapisu pliku",
+      "Uzyj :w !sudo tee %",
+      "Skonfiguruj cmap w .vimrc"
+    ],
+    "solution": "Uzyj ':w !sudo tee %' aby zapisac z uprawnieniami root. Lub uruchom 'sudo vim /etc/nginx/nginx.conf'. Dodaj do .vimrc: cmap w!! w !sudo tee > /dev/null %"
+  },
+  {
+    "id": 21,
+    "title": "Zapomniales hasla root - jak odzyskac?",
+    "category": "system",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Zapomniales hasla root na serwerze RHEL. Masz fizyczny dostep do konsoli. Jak zresetowac haslo bez reinstalacji systemu?",
+    "hints": [
+      "Edytuj parametry jadra w GRUB (nacisnij e)",
+      "Dodaj 'rd.break' do linii jadra",
+      "Po wejsciu: mount -o remount,rw /sysroot && chroot /sysroot"
+    ],
+    "solution": "1. Restart, w GRUB nacisnij e. 2. Dodaj 'rd.break' do linii linux. 3. Ctrl+X. 4. mount -o remount,rw /sysroot. 5. chroot /sysroot. 6. passwd root. 7. touch /.autorelabel. 8. exit. 9. reboot"
+  },
+  {
+    "id": 22,
+    "title": "NetworkManager - brak interfejsu po dodaniu karty",
+    "category": "network",
+    "difficulty": 2,
+    "completed": false,
+    "scenario": "Dodales nowa karte sieciowa. lspci widzi urzadzenie, ip link nie pokazuje interfejsu. NM nie stworzyl automatycznie polaczenia. Co zrobic?",
+    "hints": [
+      "Sprawdz ls /sys/class/net/",
+      "Uzyj nmcli dev status",
+      "Stworz polaczenie przez nmcli con add"
+    ],
+    "solution": "Uzyj: nmcli dev status. Jesli widzi jako disconnected: nmcli con add con-name eth1 type ethernet ifname eth1. Jesli nie widzi - zaladuj modul lub sprawdz BIOS."
+  },
+  {
+    "id": 23,
+    "title": "Dysk USB nie montuje sie automatycznie",
+    "category": "system",
+    "difficulty": 1,
+    "completed": false,
+    "scenario": "Podlaczasz dysk USB do serwera RHEL. dmesg pokazuje 'Attached SCSI disk', ale dysk nie pojawia sie w df -h ani w /media/. Jak zamontowac recznie?",
+    "hints": [
+      "Sprawdz nazwe urzadzenia w lsblk",
+      "Sprawdz system plikow przez blkid",
+      "Uzyj mount"
+    ],
+    "solution": "1. lsblk - znajdz urzadzenie. 2. blkid /dev/sdc1 - sprawdz FS. 3. mkdir -p /mnt/usb. 4. mount /dev/sdc1 /mnt/usb."
+  },
+  {
+    "id": 24,
+    "title": "DNS - resolv.conf nadpisywany",
+    "category": "network",
+    "difficulty": 2,
+    "completed": false,
+    "scenario": "Recznie edytowales /etc/resolv.conf dodajac Cloudflare DNS (1.1.1.1). Po restarcie NetworkManager plik wrocil do poprzedniej postaci. Dlaczego i jak to naprawic?",
+    "hints": [
+      "NetworkManager zarzadza resolv.conf",
+      "Uzyj nmcli do ustawienia DNS",
+      "Mozesz wylaczyc zarzadzanie DNS w NM"
+    ],
+    "solution": "NM nadpisuje resolv.conf. Rozwiazanie: 'nmcli con mod nazwa-polaczenia ipv4.dns 1.1.1.1,8.8.8.8' i restart polaczenia. Lub ustaw dns=none w /etc/NetworkManager/NetworkManager.conf."
+  },
+  {
+    "id": 25,
+    "title": "Samba - uwierzytelnianie nie dziala",
+    "category": "network",
+    "difficulty": 3,
+    "completed": false,
+    "scenario": "Udzial Samba z 'guest ok = yes' dziala. Probojesz skonfigurowac udzial z uwierzytelnianiem. smbpasswd -a jan ustawione, valid users wpisane. Ale logowanie sie nie udaje. Co jest nie tak?",
+    "hints": [
+      "Sprawdz czy uzytkownik systemowy istnieje",
+      "Haslo Samba jest niezalezne od systemowego",
+      "Sprawdz logi Samba w /var/log/samba/"
+    ],
+    "solution": "Uzytkownik 'jan' nie istnieje w systemie (Samba wymaga konta). Rozwiazanie: 'useradd -M -s /sbin/nologin jan', potem 'smbpasswd -a jan'. Sprawdz testparm."
+  }
+]

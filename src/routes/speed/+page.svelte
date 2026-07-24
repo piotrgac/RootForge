@@ -50,7 +50,28 @@
     sessionResults.push({ command_id: current.id, correct: isCorrect, time });
     if (isCorrect) correctCount++;
     totalAnswered++;
-    result = { correct: isCorrect, time, expected: current.answers[0] };
+    let feedback = '';
+    if (!isCorrect) {
+      if (current.feedback) {
+        feedback = current.feedback;
+      } else {
+        const firstExpected = current.answers[0];
+        const userParts = userCmd.split(' ');
+        const expectedParts = firstExpected.split(' ');
+        const common = userParts.filter(p => expectedParts.includes(p));
+        const missing = expectedParts.filter(p => !userParts.includes(p));
+        if (missing.length > 0) {
+          feedback = `Brakuje: ${missing.join(' ')}. `;
+        }
+        if (common.length > 0) {
+          feedback += `Dobrze użyłeś: ${common.join(' ')}.`;
+        }
+        if (!feedback) {
+          feedback = `Spróbuj: ${firstExpected}`;
+        }
+      }
+    }
+    result = { correct: isCorrect, time, expected: current.answers[0], feedback };
     invoke('finish_speed_challenge', { commandId: current.id, timeSeconds: time, correct: isCorrect });
     scoring = false;
   }
@@ -151,6 +172,9 @@
             <strong>{result.correct ? 'Dobrze!' : 'Źle'}</strong>
             {#if !result.correct}
               <p class="expected">Poprawna komenda: <code>{result.expected}</code></p>
+              {#if result.feedback}
+                <p class="feedback">{result.feedback}</p>
+              {/if}
             {/if}
             <p class="time-info">
               {result.correct ? `+${result.time <= 5 ? 20 : result.time <= 15 ? 15 : result.time <= 30 ? 10 : 5} XP` : '0 XP'}
@@ -264,6 +288,7 @@
   .result-info strong { display: block; font-size: 16px; margin-bottom: 4px; color: #f1f5f9; }
   .expected { font-size: 13px; color: #94a3b8; margin-bottom: 4px; }
   .expected code { color: #38bdf8; font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+  .feedback { font-size: 12px; color: #a78bfa; margin-top: 6px; padding: 8px 10px; background: #2d1b4e; border-radius: 6px; line-height: 1.5; }
   .time-info { font-size: 12px; color: #64748b; }
 
   .live-stats { display: flex; gap: 16px; margin-top: 16px; justify-content: center; }

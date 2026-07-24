@@ -8,6 +8,19 @@ export interface Challenge {
   details?: string | null;
   stage: number;
   exam_tag?: string | null;
+  depends_on?: number[];
+  last_reviewed?: string | null;
+}
+
+export interface Troubleshoot {
+  id: number;
+  title: string;
+  scenario: string;
+  category: string;
+  difficulty: number;
+  hints: string[];
+  solution: string;
+  completed: boolean;
 }
 
 export interface CategoryInfo {

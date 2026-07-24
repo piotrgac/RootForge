@@ -107,6 +107,11 @@ fn get_unlocked_achievements(state: tauri::State<'_, AppState>) -> Result<Vec<Ac
 }
 
 #[tauri::command]
+fn complete_troubleshoot(state: tauri::State<'_, AppState>, id: u32) -> Result<(bool, u32, Vec<u32>), String> {
+    Ok(state.store.complete_troubleshoot(id))
+}
+
+#[tauri::command]
 fn claim_daily(state: tauri::State<'_, AppState>) -> Result<(String, u32, u32), String> {
     Ok(state.store.claim_daily())
 }
@@ -201,6 +206,7 @@ pub fn run() {
             get_unlocked_achievements,
             claim_daily,
             complete_mission,
+            complete_troubleshoot,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

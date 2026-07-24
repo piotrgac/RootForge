@@ -5,6 +5,7 @@ export interface SpeedCommand {
   category: string;
   difficulty: number;
   hint?: string;
+  feedback?: string;
 }
 
 export const speedCommands: SpeedCommand[] = [

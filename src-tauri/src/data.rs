@@ -42,6 +42,22 @@ pub struct Challenge {
     pub stage: u8,
     #[serde(default)]
     pub exam_tag: Option<String>,
+    #[serde(default)]
+    pub depends_on: Vec<u32>,
+    #[serde(default)]
+    pub last_reviewed: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Troubleshoot {
+    pub id: u32,
+    pub title: String,
+    pub scenario: String,
+    pub category: Category,
+    pub difficulty: u8,
+    pub hints: Vec<String>,
+    pub solution: String,
+    pub completed: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -160,6 +176,8 @@ pub struct AppData {
     pub missions: Vec<Mission>,
     pub last_daily_date: Option<String>,
     pub daily_streak: u32,
+    pub troubleshoot: Vec<Troubleshoot>,
+    pub troubleshoot_results: Vec<u32>,
 }
 
 impl AppData {
@@ -176,6 +194,8 @@ impl AppData {
             .expect("Failed to parse achievements.json");
         let missions: Vec<Mission> = serde_json::from_str(include_str!("../data/missions.json"))
             .expect("Failed to parse missions.json");
+        let troubleshoot: Vec<Troubleshoot> = serde_json::from_str(include_str!("../data/troubleshoot.json"))
+            .expect("Failed to parse troubleshoot.json");
 
         AppData {
             xp: 0,
@@ -196,6 +216,8 @@ impl AppData {
             missions,
             last_daily_date: None,
             daily_streak: 0,
+            troubleshoot,
+            troubleshoot_results: Vec::new(),
         }
     }
 }
@@ -424,6 +446,21 @@ impl DataStore {
             }
         }
         (false, vec![])
+    }
+
+    pub fn complete_troubleshoot(&self, id: u32) -> (bool, u32, Vec<u32>) {
+        let mut data = self.data.lock().unwrap();
+        if data.troubleshoot_results.contains(&id) {
+            return (false, 0, vec![]);
+        }
+        data.troubleshoot_results.push(id);
+        let xp_gain = 25;
+        data.xp += xp_gain;
+        data.level = 1 + data.xp / 100;
+        let unlocked = self.check_achievements_inner(&mut data);
+        drop(data);
+        self.save();
+        (true, xp_gain, unlocked)
     }
 
     pub fn finish_speed_challenge(&self, command_id: u32, time_seconds: u32, correct: bool) -> (u32, Vec<u32>) {
