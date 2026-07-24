@@ -1888,5 +1888,380 @@
     "explanation": "Zawsze visudo – blokada pliku + walidacja składni przed zapisem.",
     "stage": 2,
     "hint": "visudo (blokada + walidacja). Drop-in w /etc/sudoers.d/."
+  },
+  {
+    "id": 127,
+    "question": "Które narzędzie w RHEL 9 służy do automatycznej instalacji systemu?",
+    "options": [
+      "Kickstart",
+      "Preseed",
+      "AutoYaST",
+      "Autounattend"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "Kickstart (ks.cfg) to plik konfiguracyjny z odpowiedziami na pytania instalatora Anaconda. Generowany automatycznie po instalacji jako /root/anaconda-ks.cfg.",
+    "stage": 1,
+    "hint": null
+  },
+  {
+    "id": 128,
+    "question": "Jaka jest minimalna zalecana partycja wymagana do uruchomienia RHEL 9 (bez LVM)?",
+    "options": [
+      "/boot (1 GB) + / (10 GB)",
+      "Tylko / (20 GB)",
+      "/boot (500 MB) + / (5 GB)",
+      "/ (15 GB) + swap (4 GB)"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "Rekomendowany schemat: /boot 1 GB (ext4/xfs) + / 10 GB (xfs/LVM). /boot zawiera jądro i initramfs, / to reszta systemu.",
+    "stage": 1,
+    "hint": null
+  },
+  {
+    "id": 129,
+    "question": "Który plik jest generowany automatycznie po instalacji RHEL i zawiera konfigurację instalacji?",
+    "options": [
+      "/root/anaconda-ks.cfg",
+      "/etc/kickstart.cfg",
+      "/root/install.log",
+      "/var/log/anaconda.conf"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "Po instalacji Anaconda zapisuje /root/anaconda-ks.cfg – możesz go użyć do powtórzenia instalacji.",
+    "stage": 1,
+    "hint": null
+  },
+  {
+    "id": 130,
+    "question": "Które polecenie ustawia hasło Samba dla użytkownika?",
+    "options": [
+      "smbpasswd -a jan",
+      "passwd jan",
+      "smbpasswd -u jan",
+      "samba-password jan"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "smbpasswd -a jan dodaje użytkownika Samba i ustawia hasło. Hasło Samba JEST NIEZALEŻNE od hasła systemowego.",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 131,
+    "question": "Który pakiet jest wymagany na kliencie do montowania udziałów CIFS?",
+    "options": [
+      "cifs-utils",
+      "samba-client",
+      "nfs-utils",
+      "smbclient"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "cifs-utils dostarcza mount.cifs do montowania udziałów Samba/Windows.",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 132,
+    "question": "Jaka opcja w /etc/fstab zapobiega blokowaniu boota przy niedostępnym udziale CIFS?",
+    "options": [
+      "nofail",
+      "_netdev",
+      "noauto",
+      "soft"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "nofail – kontynuuj boot jeśli montowanie nie działa. Dla CIFS/NFS warto dodać: username=...,password=...,uid=...,nofail 0 0.",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 133,
+    "question": "Które polecenie pozwala kontenerom rootless działać po wylogowaniu użytkownika?",
+    "options": [
+      "loginctl enable-linger",
+      "systemctl --user enable",
+      "podman enable-linger",
+      "lingerctl on"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "loginctl enable-linger sprawia, że procesy użytkownika (w tym kontenery Podman i systemd --user services) nie są zabijane po wylogowaniu.",
+    "stage": 4,
+    "hint": null
+  },
+  {
+    "id": 134,
+    "question": "Jaka flaga przy montowaniu wolumenu do kontenera powoduje relabel SELinux dla pojedynczego kontenera?",
+    "options": [
+      ":Z",
+      ":z",
+      ":S",
+      ":R"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": ":Z – relabel dla JEDNEGO kontenera (container_file_t). :z – dla wielu kontenerów dzielących wolumen (container_share_t).",
+    "stage": 4,
+    "hint": null
+  },
+  {
+    "id": 135,
+    "question": "Które polecenie wyświetla reguły auditd?",
+    "options": [
+      "auditctl -l",
+      "auditctl -r",
+      "ausearch -r",
+      "aureport -l"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "auditctl -l listuje wszystkie załadowane reguły. Reguły trwałe są w /etc/audit/rules.d/.",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 136,
+    "question": "Gdzie auditd zapisuje swoje logi?",
+    "options": [
+      "/var/log/audit/audit.log",
+      "/var/log/messages",
+      "/var/log/auditd.log",
+      "/var/log/secure"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "auditd zapisuje do /var/log/audit/audit.log (format binarny). Czytamy przez ausearch lub aureport.",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 137,
+    "question": "Które polecenie generuje podsumowanie zdarzeń auditd?",
+    "options": [
+      "aureport --summary",
+      "ausearch --summary",
+      "auditctl --summary",
+      "audit-summary"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "aureport --summary pokazuje liczbę zdarzeń według typu, w tym AVC (SELinux denials).",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 138,
+    "question": "Które polecenie zapisuje czas systemowy do zegara sprzętowego (RTC)?",
+    "options": [
+      "hwclock --systohc",
+      "hwclock --hctosys",
+      "timedatectl set-rtc",
+      "clock --save"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "hwclock --systohc (= system-to-hardware-clock) zapisuje aktualny czas systemowy do RTC na płycie głównej.",
+    "stage": 2,
+    "hint": null
+  },
+  {
+    "id": 139,
+    "question": "Jakie polecenie pokazuje szczegółowe info o synchronizacji NTP w chronyd?",
+    "options": [
+      "chronyc tracking",
+      "chronyc sources",
+      "chronyc status",
+      "chronyc ntpdata"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "chronyc tracking pokazuje: warstwę (Stratum), offset, opóźnienie, referencję. chronyc sources -v listuje serwery NTP.",
+    "stage": 2,
+    "hint": null
+  },
+  {
+    "id": 140,
+    "question": "Czym jest Stratum w kontekście NTP?",
+    "options": [
+      "Odległością serwera od precyzyjnego źródła czasu (0-15)",
+      "Priorytetem serwera NTP",
+      "Wersją protokołu NTP",
+      "Częstotliwością synchronizacji"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "Stratum 0 = źródło atomowe/GPS. Stratum 1 = serwer podłączony do Stratum 0. Stratum 2 = serwer sync z Stratum 1. Im wyższa liczba, tym mniejsza precyzja.",
+    "stage": 2,
+    "hint": null
+  },
+  {
+    "id": 141,
+    "question": "Które polecenie trwale zmienia domyślny kontekst SELinux dla katalogu?",
+    "options": [
+      "semanage fcontext -a -t httpd_sys_content_t /web",
+      "chcon -t httpd_sys_content_t /web",
+      "restorecon -R /web",
+      "setfcontext -t httpd_sys_content_t /web"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "semanage fcontext zapisuje domyślny kontekst do polityki SELinux. chcon zmienia tylko tymczasowo – znika po restorecon.",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 142,
+    "question": "Jaki kontekst SELinux ma katalog /var/www/html na RHEL?",
+    "options": [
+      "httpd_sys_content_t",
+      "httpd_t",
+      "default_t",
+      "public_content_t"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "httpd_sys_content_t – standardowy kontekst dla plików serwowanych przez Apache. Aby Apache mógł czytać pliki, muszą mieć ten kontekst.",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 143,
+    "question": "Która opcja /etc/fstab montuje NFS dopiero po skonfigurowaniu sieci?",
+    "options": [
+      "_netdev",
+      "nofail",
+      "hard",
+      "soft"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "_netdev mówi systemd, że montowanie wymaga gotowej sieci. Dla NFS/Samba/CIFS to kluczowa opcja.",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 144,
+    "question": "Która usługa eksportuje systemy plików dla NFS v4?",
+    "options": [
+      "nfs-server",
+      "nfs",
+      "rpcbind",
+      "mountd"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "systemctl enable --now nfs-server. Dla NFSv4 rpcbind nie jest wymagane. Plik eksportów: /etc/exports.",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 145,
+    "question": "Które polecenie pokazuje UUID wszystkich systemów plików?",
+    "options": [
+      "blkid",
+      "lsblk -f",
+      "df -h",
+      "fdisk -l"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "blkid wyświetla UUID i TYPE dla każdego urządzenia. UUID jest używane w /etc/fstab zamiast nazw urządzeń (np. /dev/sda1).",
+    "stage": 2,
+    "hint": null
+  },
+  {
+    "id": 146,
+    "question": "Które polecenie montuje wszystkie systemy plików z /etc/fstab (pomijając already mounted)?",
+    "options": [
+      "mount -a",
+      "mount --all",
+      "mount /etc/fstab",
+      "systemctl mount-all"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "mount -a montuje wszystkie wpisy z /etc/fstab które nie są jeszcze zamontowane. Przydatne po edycji fstab.",
+    "stage": 2,
+    "hint": null
+  },
+  {
+    "id": 147,
+    "question": "Które polecenie tworzy pulę Stratis?",
+    "options": [
+      "stratis pool create mypool /dev/sdb",
+      "stratis create pool mypool /dev/sdb",
+      "stratis-pool --create mypool /dev/sdb",
+      "pool create stratis mypool /dev/sdb"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "stratis pool create nazwa /dev/sdX – tworzy pulę. Potem: stratis filesystem create mypool fs1.",
+    "stage": 4,
+    "hint": null
+  },
+  {
+    "id": 148,
+    "question": "Jaka jest główna zaleta VDO (Virtual Data Optimizer)?",
+    "options": [
+      "Deduplikacja i kompresja danych na poziomie blokowym",
+      "Szyfrowanie dysków",
+      "Tworzenie snapshotów",
+      "Przyspieszenie odczytu przez cache"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "VDO deduplikuje i kompresuje dane przed zapisem na dysk. Oszczędza miejsce – szczególnie na VM i backupach.",
+    "stage": 4,
+    "hint": null
+  },
+  {
+    "id": 149,
+    "question": "Który profil tuned jest zalecany dla maszyn wirtualnych (gości)?",
+    "options": [
+      "virtual-guest",
+      "virtual-host",
+      "throughput-performance",
+      "powersave"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "virtual-guest – optymalizacja dla systemów gości VM. virtual-host – dla hypervisorów.",
+    "stage": 3,
+    "hint": null
+  },
+  {
+    "id": 150,
+    "question": "Które polecenie zmienia politykę kryptograficzną na FUTURE?",
+    "options": [
+      "update-crypto-policies --set FUTURE",
+      "set-crypto-policy FUTURE",
+      "crypto --set FUTURE",
+      "dnf update-crypto FUTURE"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "update-crypto-policies --set FUTURE włącza najwyższy poziom bezpieczeństwa (szyfry 256-bit+). FUTURE może złamać starsze aplikacje.",
+    "stage": 4,
+    "hint": null
+  },
+  {
+    "id": 151,
+    "question": "Które polecenie włącza strumień Nginx 1.24 w DNF?",
+    "options": [
+      "dnf module enable nginx:1.24",
+      "dnf install nginx-1.24",
+      "dnf stream enable nginx 1.24",
+      "dnf module install nginx:1.24"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "dnf module enable nginx:1.24 włącza strumień. Potem dnf install nginx instaluje z tego strumienia.",
+    "stage": 3,
+    "hint": null
   }
 ]

@@ -62,6 +62,11 @@
             <span class="ch-category" style="background: {cat.color}20; color: {cat.color}">
               {cat.name}
             </span>
+            {#if ch.exam_tag === 'extra'}
+              <span class="ch-tag ch-tag-extra">EXTRA</span>
+            {:else if ch.exam_tag === 'rhcsa'}
+              <span class="ch-tag ch-tag-rhcsa">RHCSA</span>
+            {/if}
             <div class="ch-badges">
               {#if ch.stage}
                 <span class="ch-stage">Etap {ch.stage}</span>
@@ -108,6 +113,9 @@
 
   .ch-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .ch-category { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .ch-tag { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 4px; }
+  .ch-tag-rhcsa { background: #0ea5e920; color: #38bdf8; }
+  .ch-tag-extra { background: #7c3aed20; color: #a78bfa; }
   .ch-badges { display: flex; align-items: center; gap: 6px; }
   .ch-stage { font-size: 10px; font-weight: 600; background: #7c3aed20; color: #a78bfa; padding: 2px 8px; border-radius: 4px; }
   .ch-difficulty { color: #f59e0b; font-size: 13px; letter-spacing: 1px; }

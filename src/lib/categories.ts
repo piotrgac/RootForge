@@ -7,6 +7,7 @@ export interface Challenge {
   completed: boolean;
   details?: string | null;
   stage: number;
+  exam_tag?: string | null;
 }
 
 export interface CategoryInfo {

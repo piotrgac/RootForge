@@ -3,7 +3,7 @@
     "id": 1,
     "title": "Serwer plików z Samba/NFS",
     "description": "Skonfiguruj serwer plików udostępniający katalogi w sieci lokalnej",
-    "guide": "1. Zainstaluj samba lub nfs-utils\n2. Skonfiguruj udziały w /etc/samba/smb.conf lub /etc/exports\n3. Ustaw uprawnienia i użytkowników\n4. Przetestuj montowanie z klienta\n5. Zabezpiecz firewall",
+    "guide": "LAB: Serwer plików Samba/NFS na RHEL 9\n================================\nCEL: Skonfiguruj serwer plików dostępny z Windows (Samba) i Linux (NFS).\n\nKROK 1 – Instalacja\n-------------------\n# Zainstaluj pakiety:\ndnf install -y nfs-utils samba samba-client samba-common\n\n# Uruchom usługi:\nsystemctl enable --now nfs-server smb nmb\n\nKROK 2 – NFS export\n-------------------\nmkdir -p /srv/nfs/share\nchmod 777 /srv/nfs/share\necho \"/srv/nfs/share *(rw,sync,no_root_squash)\" >> /etc/exports\nexportfs -rav\n\n# Test NFS:\nshowmount -e localhost\n\nKROK 3 – Samba share\n-------------------\nmkdir -p /srv/samba/share\nchmod 777 /srv/samba/share\ncat >> /etc/samba/smb.conf << EOF\n\n[public]\n   path = /srv/samba/share\n   browseable = yes\n   writable = yes\n   guest ok = yes\n   create mask = 0777\nEOF\ntestparm\nsystemctl restart smb\n\nKROK 4 – Firewall\n-------------------\nfirewall-cmd --add-service={nfs,samba} --permanent\nfirewall-cmd --reload\n\nKROK 5 – Test klienta\n-------------------\n# NFS:\nmount -t nfs localhost:/srv/nfs/share /mnt\n\n# Samba:\nsmbclient -L localhost -N\n\nWERYFIKACJA:\ndf -h | grep mnt\nmount | grep -E \"nfs|cifs\"\nsystemctl status nfs-server smb",
     "github_repo": null,
     "completed": false
   },
@@ -11,7 +11,7 @@
     "id": 2,
     "title": "Monitoring serwera z Grafana",
     "description": "Skonfiguruj monitoring serwera z Prometheus + Grafana",
-    "guide": "1. Zainstaluj Prometheus i node_exporter\n2. Skonfiguruj zbieranie metryk\n3. Zainstaluj i skonfiguruj Grafanę\n4. Stwórz dashboard z użyciem CPU, RAM, dysku, sieci\n5. Dodaj alerty",
+    "guide": "LAB: Monitoring serwera z Grafana + Prometheus\n=========================================\nCEL: Postaw monitoring wydajności serwera.\n\nKROK 1 – Instalacja Prometheus\n-------------------\n# Pobierz i rozpakuj:\ncd /opt\ncurl -LO https://github.com/prometheus/prometheus/releases/latest/download/prometheus-*.linux-amd64.tar.gz\ntar xzf prometheus-*.tar.gz\nmv prometheus-* prometheus\nuseradd -r -s /sbin/nologin prometheus\nchown -R prometheus: /opt/prometheus\n\n# Stwórz plik service:\ncat > /etc/systemd/system/prometheus.service << EOF\n[Unit]\nDescription=Prometheus\nAfter=network.target\n\n[Service]\nUser=prometheus\nExecStart=/opt/prometheus/prometheus --config.file=/opt/prometheus/prometheus.yml\nRestart=always\n\n[Install]\nWantedBy=multi-user.target\nEOF\n\nsystemctl enable --now prometheus\n\nKROK 2 – Instalacja Grafana\n-------------------\n# Zainstaluj z oficjalnego repo:\ncat > /etc/yum.repos.d/grafana.repo << EOF\n[grafana]\nname=grafana\nbaseurl=https://packages.grafana.com/oss/rpm\ngpgcheck=1\ngpgkey=https://packages.grafana.com/gpg.key\nenabled=1\nEOF\ndnf install -y grafana\nsystemctl enable --now grafana-server\n\nKROK 3 – Dodaj source danych\n-------------------\nssh -L 3000:localhost:3000 user@server\n# Otwórz http://localhost:3000 (admin/admin)\n# Configuration → Data Sources → Prometheus (URL: http://localhost:9090)\n# Import dashboard: https://grafana.com/grafana/dashboards/\n\nKROK 4 – Firewall\n-------------------\nfirewall-cmd --add-port={9090,3000}/tcp --permanent\nfirewall-cmd --reload\n\nWERYFIKACJA:\ncurl http://localhost:9090/api/v1/status/config\ncurl http://localhost:3000/api/health",
     "github_repo": null,
     "completed": false
   },
@@ -19,7 +19,7 @@
     "id": 3,
     "title": "Własny serwer DNS",
     "description": "Postaw i skonfiguruj lokalny serwer DNS z blokowaniem reklam",
-    "guide": "1. Wybierz: BIND, dnsmasq lub Pi-hole\n2. Skonfiguruj strefy i przekierowania\n3. Włącz blokowanie domen\n4. Przetestuj rozwiązywanie nazw\n5. Dodaj klientów do serwera DNS",
+    "guide": "LAB: Własny serwer DNS z BIND\n===========================\nCEL: Skonfiguruj primary nameserver dla strefy example.lan.\n\nKROK 1 – Instalacja\n-------------------\ndnf install -y bind bind-utils\n\nKROK 2 – Konfiguracja named.conf\n-------------------\n# /etc/named.conf:\noptions {\n   listen-on port 53 { any; };\n   allow-query { any; };\n   recursion yes;\n   forwarders { 8.8.8.8; 1.1.1.1; };\n};\nzone \"example.lan\" IN {\n   type master;\n   file \"example.lan.zone\";\n   allow-update { none; };\n};\n\nKROK 3 – Strefa forward\n-------------------\n# /var/named/example.lan.zone:\n$TTL 1D\n@ IN SOA ns1.example.lan. admin.example.lan. (\n   20250101 ; serial\n   1D ; refresh\n   1H ; retry\n   1W ; expire\n   3H ; minimum\n)\n@ IN NS ns1.example.lan.\nns1 IN A 192.168.1.10\nwww IN A 192.168.1.20\nmail IN A 192.168.1.30\n\nKROK 4 – Uruchom i testuj\n-------------------\nchown named:named /var/named/example.lan.zone\nsystemctl enable --now named\nnamed-checkzone example.lan /var/named/example.lan.zone\ndig @localhost www.example.lan\n\nKROK 5 – Firewall\n-------------------\nfirewall-cmd --add-service=dns --permanent\nfirewall-cmd --reload\n\nWERYFIKACJA:\ndig @192.168.1.10 example.lan NS\nnslookup www.example.lan localhost",
     "github_repo": null,
     "completed": false
   },
@@ -27,7 +27,7 @@
     "id": 4,
     "title": "Automatyzacja backupu",
     "description": "Stwórz system automatycznego backupu z rotacją i powiadomieniami",
-    "guide": "1. Napisz skrypt backupu (rsync/tar)\n2. Dodaj rotację (np. daily/weekly/monthly)\n3. Wyślij powiadomienie email/ntfy\n4. Dodaj cron job\n5. Przetestuj odtwarzanie z backupu",
+    "guide": "LAB: Automatyzacja backupu z skryptem + cron\n===========================================\nCEL: Stwórz automatyczny backup katalogu /home z rotacją.\n\nKROK 1 – Skrypt backup\n-------------------\ncat > /usr/local/bin/backup.sh << 'SCRIPT'\n#!/bin/bash\nBACKUP_DIR=\"/backup\"\nSRC_DIR=\"/home\"\nDATE=$(date +%Y-%m-%d_%H%M)\nARCHIVE=\"backup-$DATE.tar.gz\"\nLOG=\"/var/log/backup.log\"\n\nmkdir -p \"$BACKUP_DIR\"\n\necho \"[$DATE] Rozpoczynam backup $SRC_DIR\" >> \"$LOG\"\ntar -czf \"$BACKUP_DIR/$ARCHIVE\" \"$SRC_DIR\" 2>> \"$LOG\"\n\nif [ $? -eq 0 ]; then\n   echo \"OK: $ARCHIVE ($(du -h \"$BACKUP_DIR/$ARCHIVE\" | cut -f1))\" >> \"$LOG\"\n   # Rotacja - trzymaj 7 dni\n   find \"$BACKUP_DIR\" -name \"backup-*.tar.gz\" -mtime +7 -delete\nelse\n   echo \"ERROR: Backup nieudany!\" >> \"$LOG\"\nfi\nSCRIPT\nchmod +x /usr/local/bin/backup.sh\n\nKROK 2 – Stwórz katalog backupu\n-------------------\nmkdir -p /backup\n\nKROK 3 – Dodaj do crona\n-------------------\ncrontab -e\n# Dodaj linię:\n0 2 * * * /usr/local/bin/backup.sh\n\nKROK 4 – Test\n-------------------\n/usr/local/bin/backup.sh\nls -la /backup/\ncat /var/log/backup.log\n\nWERYFIKACJA:\ncrontab -l | grep backup\nls -la /backup/\ntar -tzf /backup/backup-*.tar.gz | head -10",
     "github_repo": null,
     "completed": false
   },
@@ -35,7 +35,7 @@
     "id": 5,
     "title": "Dockerized Web Stack",
     "description": "Postaw stos WWW (Nginx + PHP + PostgreSQL) w Dockerze z docker-compose",
-    "guide": "1. Stwórz docker-compose.yml\n2. Skonfiguruj Nginx jako reverse proxy\n3. Dodaj PHP-FPM\n4. Skonfiguruj PostgreSQL\n5. Dodaj wolumeny i sieci\n6. Uruchom i przetestuj",
+    "guide": "LAB: Web Stack z Podman (Nginx + PHP + MariaDB)\n==============================================\nCEL: Uruchom wielokontenerową aplikację web z Podman.\n\nKROK 1 – Sieć dla kontenerów\n-------------------\npodman network create webnet\n\nKROK 2 – MariaDB\n-------------------\npodman run -d --name db --network webnet   -e MYSQL_ROOT_PASSWORD=rootpass   -e MYSQL_DATABASE=webapp   -e MYSQL_USER=web   -e MYSQL_PASSWORD=webpass   -v db_data:/var/lib/mysql   mariadb:10\n\nKROK 3 – PHP-FPM\n-------------------\npodman run -d --name php --network webnet   -v web_files:/var/www/html   php:8-fpm\n\nKROK 4 – Nginx\n-------------------\ncat > /tmp/nginx.conf << EOF\nserver {\n   listen 80;\n   root /var/www/html;\n   index index.php;\n   location ~ \\.php$ {\n      fastcgi_pass php:9000;\n      fastcgi_index index.php;\n      fastcgi_param SCRIPT_FILENAME \\$document_root\\$fastcgi_script_name;\n      include fastcgi_params;\n   }\n}\nEOF\n\npodman run -d --name web --network webnet   -p 80:80   -v web_files:/var/www/html:Z   -v /tmp/nginx.conf:/etc/nginx/conf.d/default.conf:Z   nginx:alpine\n\nKROK 5 – Test\n-------------------\npodman exec php sh -c \"echo '<?php phpinfo();' > /var/www/html/index.php\"\ncurl http://localhost\n\nKROK 6 – Cleanup\n-------------------\npodman stop web php db\npodman rm web php db\npodman network rm webnet\npodman volume rm db_data web_files\n\nWERYFIKACJA:\ncurl -s http://localhost | head -5\npodman ps\npodman network ls",
     "github_repo": null,
     "completed": false
   },
@@ -43,7 +43,7 @@
     "id": 6,
     "title": "Konfiguracja serwera pocztowego",
     "description": "Skonfiguruj serwer pocztowy (Postfix + Dovecot) z szyfrowaniem",
-    "guide": "1. Zainstaluj Postfix i Dovecot\n2. Skonfiguruj domenę i certyfikaty SSL\n3. Utwórz konta pocztowe\n4. Skonfiguruj SPF, DKIM, DMARC\n5. Przetestuj wysyłanie i odbieranie",
+    "guide": "LAB: Serwer pocztowy z Postfix + Dovecot\n=====================================\nCEL: Skonfiguruj podstawowy serwer pocztowy do wysyłki i odbioru.\n\nKROK 1 – Instalacja\n-------------------\ndnf install -y postfix dovecot mailx\n\nKROK 2 – Postfix (SMTP)\n-------------------\npostconf -e 'myhostname = mail.example.lan'\npostconf -e 'mydomain = example.lan'\npostconf -e 'myorigin = $mydomain'\npostconf -e 'inet_interfaces = all'\npostconf -e 'mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain'\npostconf -e 'home_mailbox = Maildir/'\n\nKROK 3 – Dovecot (IMAP)\n-------------------\n# /etc/dovecot/dovecot.conf:\nprotocols = imap pop3\nmail_location = maildir:~/Maildir\n\n# /etc/dovecot/conf.d/10-mail.conf:\nmail_location = maildir:~/Maildir\nfirst_valid_uid = 1000\n\nKROK 4 – Uruchom\n-------------------\nsystemctl enable --now postfix dovecot\n\nKROK 5 – Test\n-------------------\necho \"Test mail\" | mail -s \"Hello\" jan@example.lan\nmailq\n# Jako użytkownik jan:\nsu - jan -c \"mail\"\n\nKROK 6 – Firewall\n-------------------\nfirewall-cmd --add-service={smtp,imap,pop3} --permanent\nfirewall-cmd --reload\n\nWERYFIKACJA:\ntelnet localhost 25\nEHLO test\nQUIT\ntelnet localhost 143\na1 LOGIN jan haslo\na2 LIST \"\" \"*\"\na3 LOGOUT",
     "github_repo": null,
     "completed": false
   },
@@ -51,7 +51,7 @@
     "id": 7,
     "title": "Serwer VPN z WireGuard",
     "description": "Postaw własny serwer VPN WireGuard z konfiguracją klientów i routingiem",
-    "guide": "1. Zainstaluj WireGuard\n2. Wygeneruj klucze serwera i klientów\n3. Skonfiguruj interfejs wg0\n4. Dodaj reguły iptables/firewalld do NAT\n5. Skonfiguruj klientów (peer)\n6. Przetestuj połączenie i routing",
+    "guide": "LAB: Serwer VPN z WireGuard\n===========================\nCEL: Postaw tunel VPN z WireGuard między dwoma hostami.\n\nKROK 1 – Instalacja\n-------------------\ndnf install -y wireguard-tools\n\nKROK 2 – Generuj klucze\n-------------------\nwg genkey | tee /etc/wireguard/server.key | wg pubkey > /etc/wireguard/server.pub\nchmod 600 /etc/wireguard/server.key\n\nKROK 3 – Konfiguracja serwera\n-------------------\ncat > /etc/wireguard/wg0.conf << EOF\n[Interface]\nPrivateKey = $(cat /etc/wireguard/server.key)\nAddress = 10.0.0.1/24\nListenPort = 51820\nSaveConfig = false\n\n# Klient (laptop)\n[Peer]\nPublicKey = <client-public-key>\nAllowedIPs = 10.0.0.2/32\nEOF\n\nKROK 4 – Na kliencie\n-------------------\n# Generuj klucze (j.w.)\ncat > /etc/wireguard/wg0.conf << EOF\n[Interface]\nPrivateKey = <client-private-key>\nAddress = 10.0.0.2/24\n\n[Peer]\nPublicKey = <server-public-key>\nEndpoint = server.example.com:51820\nAllowedIPs = 10.0.0.0/24\nPersistentKeepalive = 25\nEOF\n\nKROK 5 – Uruchom\n-------------------\nsystemctl enable --now wg-quick@wg0\n\nKROK 6 – Firewall\n-------------------\nfirewall-cmd --add-port=51820/udp --permanent\nfirewall-cmd --reload\n\nWERYFIKACJA:\nwg show\nping -c 4 10.0.0.1\nping -c 4 10.0.0.2",
     "github_repo": null,
     "completed": false
   },
@@ -59,7 +59,7 @@
     "id": 8,
     "title": "System monitoringu Icinga/Nagios",
     "description": "Skonfiguruj monitoring całej infrastruktury z alertami i dashboardem",
-    "guide": "1. Zainstaluj Icinga2 lub Nagios Core\n2. Skonfiguruj hosty i serwisy do monitorowania\n3. Dodaj sprawdzenia: ping, HTTP, SSH, disk, CPU\n4. Skonfiguruj powiadomienia email/ntfy\n5. Dodaj graficzne raporty (PNP4Nagios/Icingaweb2)\n6. Przetestuj alerty",
+    "guide": "LAB: System monitoringu Icinga2\n==============================\nCEL: Skonfiguruj Icinga2 do monitorowania serwerów.\n\nKROK 1 – Instalacja\n-------------------\ndnf install -y https://packages.icinga.com/epel/icinga-rpm-release-9-latest.noarch.rpm\ndnf install -y icinga2 monitoring-plugins-all\n\nKROK 2 – Podstawowa konfiguracja\n-------------------\n# Włącz moduły:\nicinga2 feature enable checker command notification mainlog\n\n# /etc/icinga2/conf.d/hosts.conf:\nobject Host \"localhost\" {\n   import \"generic-host\"\n   address = \"127.0.0.1\"\n   check_command = \"hostalive\"\n}\n\nobject Host \"webserver\" {\n   import \"generic-host\"\n   address = \"192.168.1.20\"\n   check_command = \"hostalive\"\n}\n\n# /etc/icinga2/conf.d/services.conf:\napply Service \"ping\" {\n   import \"generic-service\"\n   check_command = \"ping4\"\n   assign where host.address != \"\"\n}\n\napply Service \"ssh\" {\n   import \"generic-service\"\n   check_command = \"ssh\"\n   assign where host.address != \"\"\n}\n\nKROK 3 – Uruchom\n-------------------\nsystemctl enable --now icinga2\n\nKROK 4 – Firewall\n-------------------\n# Icinga2 API:\nfirewall-cmd --add-port=5665/tcp --permanent\nfirewall-cmd --reload\n\nWERYFIKACJA:\nicinga2 node list\nicinga2 daemon -C\ntail -f /var/log/icinga2/icinga2.log",
     "github_repo": null,
     "completed": false
   },
@@ -67,7 +67,7 @@
     "id": 9,
     "title": "Automatyzacja deploymentu z Ansible",
     "description": "Napisz playbook Ansible do pełnego deploymentu aplikacji webowej",
-    "guide": "1. Stwórz inventory (hosts.ini)\n2. Napisz playbook: instalacja Nginx + certbot\n3. Deployment aplikacji przez git clone\n4. Dodaj zmienne i szablony (Jinja2)\n5. Zabezpiecz hasła Ansible Vaultem\n6. Uruchom na zdalnym serwerze",
+    "guide": "LAB: Automatyzacja deploymentu z Ansible\n========================================\nCEL: Użyj Ansible do zarządzania konfiguracją serwerów.\n\nKROK 1 – Instalacja\n-------------------\ndnf install -y ansible-core ansible-collection-redhat-rhel_system_roles\n\nKROK 2 – Inventory\n-------------------\nmkdir -p /home/ansible\ncat > /home/ansible/inventory.ini << EOF\n[webservers]\nweb1.example.com ansible_user=root\nweb2.example.com ansible_user=root\n\n[dbservers]\ndb1.example.com ansible_user=root\n\n[all:vars]\nansible_python_interpreter=/usr/bin/python3\nEOF\n\nKROK 3 – Playbook: serwer WWW\n-------------------\ncat > /home/ansible/webserver.yml << EOF\n---\n- name: Konfiguracja serwera WWW\n  hosts: webservers\n  tasks:\n    - name: Zainstaluj nginx\n      dnf:\n        name: nginx\n        state: present\n\n    - name: Kopiuj konfigurację\n      template:\n        src: default.conf.j2\n        dest: /etc/nginx/conf.d/default.conf\n      notify: restart nginx\n\n    - name: Uruchom nginx\n      systemd:\n        name: nginx\n        enabled: yes\n        state: started\n\n  handlers:\n    - name: restart nginx\n      systemd:\n        name: nginx\n        state: restarted\nEOF\n\nKROK 4 – Test składni i such-run\n-------------------\nansible-playbook --syntax-check webserver.yml\nansible all -i inventory.ini -m ping\nansible-playbook -i inventory.ini webserver.yml --check\n\nKROK 5 – Wykonanie\n-------------------\nansible-playbook -i inventory.ini webserver.yml\n\nWERYFIKACJA:\nansible webservers -i inventory.ini -a \"curl -s localhost | head -3\"\nansible all -i inventory.ini -m setup | head -20",
     "github_repo": null,
     "completed": false
   },
@@ -75,7 +75,7 @@
     "id": 10,
     "title": "Klaster Kubernetes z k3s",
     "description": "Postaw klaster Kubernetes na kilku VPS-ach lub maszynach wirtualnych",
-    "guide": "1. Zainstaluj k3s na serwerze głównym\n2. Dodaj agentów (worker nodes)\n3. Skonfiguruj kubectl i połącz się\n4. Wdróż przykładową aplikację z deployment + service\n5. Dodaj Ingress (Traefik)\n6. Skonfiguruj PersistentVolume\n7. Przetestuj skalowanie",
+    "guide": "LAB: Klaster Kubernetes z k3s\n=============================\nCEL: Postaw lekki klaster Kubernetes (k3s) na dwóch maszynach.\n\nKROK 1 – Master node\n-------------------\n# Na maszynie głównej:\ncurl -sfL https://get.k3s.io | sh -\n# Po instalacji:\nkubectl get nodes\nkubectl get pods -A\n\nKROK 2 – Pobierz token\n-------------------\ncat /var/lib/rancher/k3s/server/node-token\n# Skopiuj token do schowka\n\nKROK 3 – Worker node\n-------------------\n# Na drugiej maszynie:\ncurl -sfL https://get.k3s.io | K3S_URL=https://<master-ip>:6443 K3S_TOKEN=<token> sh -\n\nKROK 4 – Deploy testowy\n-------------------\nkubectl create deployment nginx --image=nginx\nkubectl expose deployment nginx --port=80 --type=NodePort\n\nKROK 5 – Sprawdź\n-------------------\nkubectl get all\nkubectl get nodes -o wide\ncurl http://localhost:<node-port>\n\nWERYFIKACJA:\nkubectl get nodes\nkubectl get pods\nkubectl logs deployment/nginx",
     "github_repo": null,
     "completed": false
   }
