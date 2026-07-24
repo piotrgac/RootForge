@@ -1,7 +1,9 @@
 <script>
   import { invoke } from '@tauri-apps/api/core';
   import { onMount } from 'svelte';
-  import { getCategoryInfo } from '$lib/categories.js';
+  import { getCategoryInfo } from '$lib/categories';
+  import QuizOption from '$lib/components/QuizOption.svelte';
+  import ResultBox from '$lib/components/ResultBox.svelte';
 
   let quizzes = $state([]);
   let examQuestions = $state([]);
@@ -10,6 +12,7 @@
   let showResult = $state(false);
   let isCorrect = $state(false);
   let explanation = $state('');
+  let showingHint = $state(false);
   let correctCount = $state(0);
   let totalAnswered = $state(0);
   let phase = $state('start'); // start | exam | result
@@ -43,6 +46,7 @@
     totalAnswered = 0;
     selectedAnswer = null;
     showResult = false;
+    showingHint = false;
     phase = 'exam';
     timeLeft = 30 * 60;
 
@@ -72,6 +76,7 @@
       showResult = false;
       isCorrect = false;
       explanation = '';
+      showingHint = false;
     } else {
       finishExam();
     }
@@ -151,6 +156,9 @@
         </div>
         <span class="progress-label">{totalAnswered}/15</span>
       </div>
+      {#if currentQ.stage}
+        <span class="exam-stage">Etap {currentQ.stage}</span>
+      {/if}
       <div class="exam-category" style="background: {cat.color}20; color: {cat.color}">
         {cat.name}
       </div>
@@ -163,22 +171,14 @@
       </h2>
       <div class="quiz-options">
         {#each currentQ.options as opt, i}
-          <button
-            class="quiz-option"
-            class:selected={selectedAnswer === i}
-            class:correct={showResult && i === currentQ.correct_index}
-            class:wrong={showResult && selectedAnswer === i && i !== currentQ.correct_index}
-            onclick={() => { if (!showResult) selectedAnswer = i; }}
-            disabled={showResult}
-          >
-            <span class="opt-letter">{String.fromCharCode(65 + i)}</span>
-            <span class="opt-text">{opt}</span>
-            {#if showResult && i === currentQ.correct_index}
-              <span class="opt-icon">✓</span>
-            {:else if showResult && selectedAnswer === i && i !== currentQ.correct_index}
-              <span class="opt-icon">✗</span>
-            {/if}
-          </button>
+          <QuizOption
+            text={opt}
+            index={i}
+            correctIndex={currentQ.correct_index}
+            selected={selectedAnswer}
+            {showResult}
+            onselect={(idx) => selectedAnswer = idx}
+          />
         {/each}
       </div>
 
@@ -187,10 +187,17 @@
           Sprawdź odpowiedź
         </button>
       {:else}
-        <div class="result-box" class:correct={isCorrect} class:wrong={!isCorrect}>
-          <strong>{isCorrect ? '✅ Dobrze!' : '❌ Źle'}</strong>
-          <p>{explanation}</p>
-        </div>
+        {#snippet hintContent()}
+          <button class="hint-toggle" onclick={() => showingHint = !showingHint}>
+            💡 {showingHint ? 'Ukryj podpowiedź' : 'Pokaż podpowiedź'}
+          </button>
+          {#if showingHint}
+            <div class="hint-box">{currentQ.hint}</div>
+          {/if}
+        {/snippet}
+        <ResultBox correct={isCorrect} {explanation} hint={currentQ.hint}>
+          {hintContent}
+        </ResultBox>
         <button class="next-btn" onclick={nextQuestion}>
           {currentIdx < 14 ? '➡️ Dalej' : '🏁 Zakończ egzamin'}
         </button>
@@ -222,10 +229,6 @@
 
 <style>
   .exam-page { max-width: 700px; }
-  .page-header h1 { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
-  .page-header p { color: #64748b; margin-bottom: 20px; }
-  .loading { color: #64748b; }
-
   .start-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 32px; text-align: center; }
   .start-icon { font-size: 64px; margin-bottom: 16px; }
   .start-card h2 { font-size: 24px; font-weight: 700; color: #f1f5f9; margin-bottom: 20px; }
@@ -257,22 +260,15 @@
   .progress-fill { height: 100%; background: #0ea5e9; border-radius: 4px; transition: width 0.3s; }
   .progress-label { font-size: 13px; color: #94a3b8; font-weight: 600; min-width: 30px; }
   .exam-category { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
+  .exam-stage { font-size: 10px; font-weight: 600; background: #7c3aed20; color: #a78bfa; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
+  .hint-toggle { display: block; margin-top: 8px; background: none; border: 1px dashed #7c3aed; color: #a78bfa; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.15s; }
+  .hint-toggle:hover { background: #7c3aed20; }
+  .hint-box { margin-top: 8px; padding: 10px 14px; background: #2d1b4e; border: 1px solid #7c3aed; border-radius: 8px; color: #d8b4fe; font-size: 13px; line-height: 1.5; }
 
   .exam-card { background: #1e293b; border: 1px solid #334155; border-radius: 14px; padding: 28px; }
   .exam-question { font-size: 20px; font-weight: 600; color: #f1f5f9; margin-bottom: 20px; line-height: 1.4; }
   .q-num { color: #0ea5e9; margin-right: 6px; }
   .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-  .quiz-option { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #0f172a; border: 1px solid #334155; border-radius: 10px; color: #e2e8f0; cursor: pointer; text-align: left; transition: all 0.15s; font-size: 14px; }
-  .quiz-option:hover:not(:disabled) { border-color: #475569; background: #1a2332; }
-  .quiz-option.selected { border-color: #0ea5e9; background: #0ea5e920; }
-  .quiz-option.correct { border-color: #22c55e; background: #22c55e20; }
-  .quiz-option.wrong { border-color: #ef4444; background: #ef444420; }
-  .quiz-option:disabled { cursor: default; }
-  .opt-letter { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #334155; font-weight: 700; font-size: 13px; flex-shrink: 0; }
-  .quiz-option.correct .opt-letter { background: #22c55e; color: #fff; }
-  .quiz-option.wrong .opt-letter { background: #ef4444; color: #fff; }
-  .opt-text { flex: 1; }
-  .opt-icon { font-weight: 700; font-size: 16px; }
 
   .submit-btn, .next-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
   .submit-btn { background: #0ea5e9; color: #fff; }
@@ -280,11 +276,6 @@
   .submit-btn:disabled { opacity: 0.5; cursor: default; }
   .next-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; margin-top: 12px; }
   .next-btn:hover { background: #263548; }
-
-  .result-box { padding: 16px; border-radius: 10px; margin-bottom: 12px; font-size: 14px; line-height: 1.6; }
-  .result-box.correct { background: #22c55e20; border: 1px solid #22c55e; color: #bbf7d0; }
-  .result-box.wrong { background: #ef444420; border: 1px solid #ef4444; color: #fecaca; }
-  .result-box strong { display: block; margin-bottom: 8px; font-size: 16px; }
 
   .result-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 40px; text-align: center; }
   .result-icon { font-size: 72px; margin-bottom: 16px; }

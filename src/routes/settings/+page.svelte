@@ -179,8 +179,7 @@
 
 <style>
   .settings-page { max-width: 900px; }
-  .page-header h1 { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
-  .page-header p { color: #64748b; margin-bottom: 24px; }
+  /* page-header h1/p in shared.css */
   .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; }
   .card h2 { font-size: 16px; font-weight: 600; color: #f1f5f9; margin-bottom: 8px; }

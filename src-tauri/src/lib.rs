@@ -1,6 +1,6 @@
 mod data;
 
-use data::{AppData, DataStore};
+use data::{Achievement, AppData, DataStore};
 use tauri::Manager;
 
 struct AppState {
@@ -92,6 +92,21 @@ fn log_study_session(state: tauri::State<'_, AppState>, minutes: u32) -> Result<
 }
 
 #[tauri::command]
+fn finish_speed_challenge(state: tauri::State<'_, AppState>, command_id: u32, time_seconds: u32, correct: bool) -> Result<(u32, Vec<u32>), String> {
+    Ok(state.store.finish_speed_challenge(command_id, time_seconds, correct))
+}
+
+#[tauri::command]
+fn check_achievements(state: tauri::State<'_, AppState>) -> Result<Vec<u32>, String> {
+    Ok(state.store.check_achievements())
+}
+
+#[tauri::command]
+fn get_unlocked_achievements(state: tauri::State<'_, AppState>) -> Result<Vec<Achievement>, String> {
+    Ok(state.store.get_unlocked_achievements())
+}
+
+#[tauri::command]
 fn export_progress_markdown(state: tauri::State<'_, AppState>) -> Result<String, String> {
     Ok(state.store.export_progress_markdown())
 }
@@ -171,6 +186,9 @@ pub fn run() {
             export_progress_markdown,
             backup_to_github,
             restore_from_github,
+            finish_speed_challenge,
+            check_achievements,
+            get_unlocked_achievements,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

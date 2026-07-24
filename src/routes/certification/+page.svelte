@@ -1,6 +1,6 @@
 <script>
-  import { certificationRoadmaps, getRoadmapByName } from '$lib/certification.js';
-  import { getCategoryInfo } from '$lib/categories.js';
+  import { certificationRoadmaps, getRoadmapByName } from '$lib/certification';
+  import { getCategoryInfo } from '$lib/categories';
 
   let activeRoadmap = $state(certificationRoadmaps[0].name);
 
@@ -76,9 +76,6 @@
 
 <style>
   .cert-page { max-width: 1000px; }
-  .page-header h1 { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
-  .page-header p { color: #64748b; margin-bottom: 20px; }
-
   .cert-selector { display: flex; gap: 8px; margin-bottom: 24px; }
   .cert-btn { padding: 10px 20px; border: 1px solid #334155; background: #1e293b; color: #94a3b8; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.15s; }
   .cert-btn:hover { background: #334155; color: #e2e8f0; }

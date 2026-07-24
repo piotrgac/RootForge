@@ -1,4 +1,5 @@
 <script>
+  import '$lib/styles/shared.css';
   import { page } from '$app/stores';
   let { children } = $props();
   let sidebarOpen = $state(true);
@@ -10,6 +11,7 @@
     { href: '/projects', label: 'Projekty', icon: '💻' },
     { href: '/quiz', label: 'Quiz', icon: '🧠' },
     { href: '/exam', label: 'Egzamin', icon: '📝' },
+    { href: '/speed', label: 'Speed', icon: '⚡' },
     { href: '/review', label: 'Powtórka', icon: '🔄' },
     { href: '/progress', label: 'Postępy', icon: '📈' },
     { href: '/resources', label: 'Zasoby', icon: '📚' },

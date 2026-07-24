@@ -2,7 +2,7 @@
   import { invoke } from '@tauri-apps/api/core';
   import { onMount } from 'svelte';
   import { Chart, registerables } from 'chart.js';
-  import { getCategoryStats } from '$lib/categories.js';
+  import { getCategoryStats } from '$lib/categories';
 
   Chart.register(...registerables);
 
@@ -13,6 +13,18 @@
   let totalHours = $state(0);
   let todayMinutes = $state(0);
   let dailyGoal = $state(30);
+  let stageStats = $derived.by(() => {
+    if (!data?.challenges) return [];
+    const map = {};
+    for (const ch of data.challenges) {
+      const s = ch.stage || 0;
+      if (s === 0) continue;
+      if (!map[s]) map[s] = { stage: s, total: 0, done: 0 };
+      map[s].total++;
+      if (ch.completed) map[s].done++;
+    }
+    return Object.values(map).sort((a, b) => a.stage - b.stage);
+  });
 
   function computeStreak(sessions) {
     if (!sessions.length) return 0;
@@ -71,7 +83,7 @@
     // --- Category doughnut ---
     const catCanvas = document.getElementById('categoryChart');
     if (catCanvas) {
-      const ctx = catCanvas.getContext('2d');
+      const ctx = /** @type {HTMLCanvasElement} */ (catCanvas).getContext('2d');
       const chart = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -98,7 +110,7 @@
     // --- Progress bar chart ---
     const progCanvas = document.getElementById('progressChart');
     if (progCanvas) {
-      const ctx = progCanvas.getContext('2d');
+      const ctx = /** @type {HTMLCanvasElement} */ (progCanvas).getContext('2d');
       const chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -134,6 +146,56 @@
       chartInstances.push(chart);
     }
 
+    // --- Stage charts ---
+    const stageMap = {};
+    for (const ch of data.challenges) {
+      const s = ch.stage || 0;
+      if (s === 0) continue;
+      if (!stageMap[s]) stageMap[s] = { stage: s, total: 0, done: 0, label: `Etap ${s}` };
+      stageMap[s].total++;
+      if (ch.completed) stageMap[s].done++;
+    }
+    const stageStats = Object.values(stageMap).sort((a, b) => a.stage - b.stage);
+    const stageColors = ['#7c3aed', '#a78bfa', '#c4b5fd', '#8b5cf6', '#6d28d9'];
+
+    const stageCanvas = document.getElementById('stageChart');
+    if (stageCanvas && stageStats.length > 0) {
+      const ctx = /** @type {HTMLCanvasElement} */ (stageCanvas).getContext('2d');
+      const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: stageStats.map(s => s.label),
+          datasets: [
+            {
+              label: 'Ukończone',
+              data: stageStats.map(s => s.done),
+              backgroundColor: stageStats.map((_, i) => stageColors[i % stageColors.length]),
+              borderRadius: 4,
+            },
+            {
+              label: 'Pozostało',
+              data: stageStats.map(s => s.total - s.done),
+              backgroundColor: '#334155',
+              borderRadius: 4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+            y: { ticks: { color: '#94a3b8', stepSize: 1 }, grid: { color: '#1e293b' }, beginAtZero: true },
+          },
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 16 } },
+            title: { display: true, text: 'Postęp według etapów', color: '#e2e8f0', font: { size: 16 } },
+          },
+        },
+      });
+      chartInstances.push(chart);
+    }
+
     // --- Study time bar chart (last 14 days) ---
     const sessions = data.sessions || [];
     dailyGoal = data.daily_goal_minutes || 30;
@@ -153,7 +215,7 @@
 
     const studyCanvas = document.getElementById('studyChart');
     if (studyCanvas) {
-      const ctx = studyCanvas.getContext('2d');
+      const ctx = /** @type {HTMLCanvasElement} */ (studyCanvas).getContext('2d');
       const chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -236,6 +298,14 @@
       </div>
     </div>
 
+    {#if stageStats.length > 0}
+      <div class="chart-full">
+        <div class="chart-container">
+          <canvas id="stageChart"></canvas>
+        </div>
+      </div>
+    {/if}
+
     <div class="stats-table">
       <h2>Szczegółowe statystyki</h2>
       <div class="table-grid">
@@ -262,15 +332,40 @@
         {/each}
       </div>
     </div>
+
+    {#if stageStats.length > 0}
+      <div class="stats-table" style="margin-top: 20px;">
+        <h2>Postęp według etapów</h2>
+        <div class="table-grid">
+          <div class="table-row header">
+            <span>Etap</span>
+            <span>Ukończone</span>
+            <span>Wszystkie</span>
+            <span>Postęp</span>
+          </div>
+          {#each stageStats as sp}
+            <div class="table-row">
+              <span class="cat-label">
+                <span class="cat-dot" style="background: #7c3aed"></span>
+                Etap {sp.stage}
+              </span>
+              <span>{sp.done}</span>
+              <span>{sp.total}</span>
+              <span>
+                <div class="tbl-bar-bg">
+                  <div class="tbl-bar-fill" style="width: {sp.done / sp.total * 100}%; background: #7c3aed"></div>
+                </div>
+              </span>
+            </div>
+          {/each}
+        </div>
+      </div>
+    {/if}
   {/if}
 </div>
 
 <style>
   .progress-page { max-width: 1000px; }
-  .page-header h1 { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
-  .page-header p { color: #64748b; margin-bottom: 24px; }
-  .loading { color: #64748b; }
-
   .summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
   .summary-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 16px; text-align: center; }
   .summary-card.goal-met { border-color: #166534; }

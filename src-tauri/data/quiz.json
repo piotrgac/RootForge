@@ -1,0 +1,1892 @@
+[
+  {
+    "id": 1,
+    "question": "Które polecenie wyświetla aktualną ścieżkę katalogu roboczego?",
+    "options": [
+      "ls",
+      "pwd",
+      "cd",
+      "echo $PWD"
+    ],
+    "correct_index": 1,
+    "category": "linux",
+    "explanation": "pwd (print working directory) wyświetla aktualną ścieżkę. echo $PWD też działa, ale pwd jest standardem.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 2,
+    "question": "Jaki port domyślnie używa SSH?",
+    "options": [
+      "22",
+      "80",
+      "443",
+      "21"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "SSH domyślnie nasłuchuje na porcie 22 (TCP).",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 3,
+    "question": "Które polecenie zmienia uprawnienia pliku na wykonywalny dla właściciela?",
+    "options": [
+      "chmod +x plik",
+      "chmod 644 plik",
+      "chown +x plik",
+      "chmod u+x plik"
+    ],
+    "correct_index": 3,
+    "category": "system",
+    "explanation": "chmod u+x dodaje uprawnienie execute (x) dla właściciela (u). chmod +x daje execute wszystkim.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 4,
+    "question": "Co robi komenda `systemctl enable serwis`?",
+    "options": [
+      "Uruchamia serwis natychmiast",
+      "Dodaje serwis do autostartu",
+      "Wyłącza serwis",
+      "Sprawdza status serwisu"
+    ],
+    "correct_index": 1,
+    "category": "system",
+    "explanation": "systemctl enable tworzy symlink, który uruchamia serwis przy starcie systemu. Do natychmiastowego uruchomienia użyj systemctl start.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 5,
+    "question": "Który typ rekordu DNS mapuje nazwę na adres IPv6?",
+    "options": [
+      "A",
+      "AAAA",
+      "CNAME",
+      "MX"
+    ],
+    "correct_index": 1,
+    "category": "network",
+    "explanation": "AAAA (quad-A) mapuje nazwę na adres IPv6. A – IPv4, CNAME – alias, MX – serwer poczty.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 6,
+    "question": "Jaki jest domyślny tryb SELinux na Fedorze?",
+    "options": [
+      "Disabled",
+      "Permissive",
+      "Enforcing",
+      "Audit"
+    ],
+    "correct_index": 2,
+    "category": "security",
+    "explanation": "Fedora domyślnie używa SELinux w trybie Enforcing (aktywna ochrona).",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 7,
+    "question": "Co oznacza skrót LVM?",
+    "options": [
+      "Linux Volume Manager",
+      "Logical Volume Manager",
+      "Local Virtual Memory",
+      "Linear Virtual Management"
+    ],
+    "correct_index": 1,
+    "category": "system",
+    "explanation": "LVM = Logical Volume Manager – elastyczne zarządzanie przestrzenią dyskową.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 8,
+    "question": "Która komenda wyświetli wszystkie procesy użytkownika?",
+    "options": [
+      "ps -ef",
+      "ps aux",
+      "top -u user",
+      "Wszystkie powyższe"
+    ],
+    "correct_index": 3,
+    "category": "system",
+    "explanation": "Wszystkie trzy komendy (ps -ef, ps aux, top -u user) wyświetlają procesy użytkownika.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 9,
+    "question": "Jaki plik konfiguracyjny odpowiada za repozytoria DNF?",
+    "options": [
+      "/etc/dnf/dnf.conf",
+      "/etc/yum.repos.d/",
+      "/etc/apt/sources.list",
+      "/etc/pacman.conf"
+    ],
+    "correct_index": 1,
+    "category": "linux",
+    "explanation": "Repozytoria DNF znajdują się w /etc/yum.repos.d/ (kompatybilność z YUM). Główny plik konfiguracyjny DNF to /etc/dnf/dnf.conf.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 10,
+    "question": "Co robi flaga `-v` w komendzie `tar -czvf archiwum.tar.gz katalog/`?",
+    "options": [
+      "Kompresuje",
+      "Wyświetla szczegółowe informacje (verbose)",
+      "Tworzy nowe archiwum",
+      "Weryfikuje archiwum"
+    ],
+    "correct_index": 1,
+    "category": "shell",
+    "explanation": "-v (verbose) wyświetla listę przetwarzanych plików. -c tworzy, -z kompresuje gzip, -f określa nazwę pliku.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 11,
+    "question": "Który port jest domyślnie używany przez HTTP?",
+    "options": [
+      "22",
+      "80",
+      "443",
+      "8080"
+    ],
+    "correct_index": 1,
+    "category": "network",
+    "explanation": "HTTP domyślnie używa portu 80, HTTPS – 443.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 12,
+    "question": "Jak sprawdzić aktualnie nasłuchujące porty w systemie?",
+    "options": [
+      "netstat -tulpn",
+      "ss -tulpn",
+      "lsof -i -P -n",
+      "Wszystkie powyższe"
+    ],
+    "correct_index": 3,
+    "category": "network",
+    "explanation": "netstat, ss i lsof mogą wyświetlić nasłuchujące porty. ss jest najnowszym zalecanym narzędziem.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 13,
+    "question": "Jaka jest różnica między Docker a maszyną wirtualną?",
+    "options": [
+      "Docker jest szybszy bo współdzieli jądro hosta",
+      "Maszyny wirtualne są lżejsze",
+      "Docker wymaga hypervisora",
+      "Nie ma różnicy"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Docker używa jądra hosta (współdzielone), podczas gdy VM ma własne jądro – Docker jest lżejszy i szybszy.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 14,
+    "question": "Co to jest SELinux context?",
+    "options": [
+      "Etykieta określająca typ pliku/procesu i jego uprawnienia",
+      "Katalog domowy użytkownika",
+      "Plik konfiguracyjny sieci",
+      "Zmienna środowiskowa"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "SELinux context (kontekst) to etykieta zawierająca user:role:type:level, która określa co proces/plik może robić.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 15,
+    "question": "Które narzędzie służy do automatycznej konfiguracji serwerów?",
+    "options": [
+      "Ansible",
+      "Docker",
+      "Systemd",
+      "Cron"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Ansible to narzędzie do automatyzacji konfiguracji (Infrastructure as Code). Docker to konteneryzacja, systemd – init, cron – planowanie zadań.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 16,
+    "question": "Co robi polecenie `ln -s`?",
+    "options": [
+      "Tworzy dowiązanie symboliczne",
+      "Tworzy dowiązanie twarde",
+      "Wyświetla listę plików",
+      "Zmienia nazwę pliku"
+    ],
+    "correct_index": 0,
+    "category": "linux",
+    "explanation": "ln -s (symbolic link) tworzy dowiązanie symboliczne wskazujące na inny plik. Bez -s tworzy dowiązanie twarde.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 17,
+    "question": "Który plik zawiera listę lokalnych użytkowników systemu?",
+    "options": [
+      "/etc/users",
+      "/etc/passwd",
+      "/etc/shadow",
+      "/var/log/auth.log"
+    ],
+    "correct_index": 1,
+    "category": "linux",
+    "explanation": "/etc/passwd zawiera listę użytkowników (nazwa, UID, GID, shell, katalog domowy). Hasła są w /etc/shadow.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 18,
+    "question": "Co to jest inode w systemie plików Linux?",
+    "options": [
+      "Nazwa pliku",
+      "Struktura danych przechowująca metadane pliku",
+      "Katalog główny",
+      "System plików"
+    ],
+    "correct_index": 1,
+    "category": "linux",
+    "explanation": "Inode przechowuje metadane pliku (uprawnienia, właściciel, rozmiar, timestampy, lokalizacja bloków) – wszystko poza nazwą. ls -i pokazuje numer inode.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 19,
+    "question": "Jakie polecenie pokazuje użycie przestrzeni dyskowej partycji?",
+    "options": [
+      "du",
+      "df",
+      "mount",
+      "lsblk"
+    ],
+    "correct_index": 1,
+    "category": "linux",
+    "explanation": "df (disk free) pokazuje użycie partycji. du (disk usage) pokazuje rozmiar katalogów. mount pokazuje punkty montowania. lsblk listuje urządzenia blokowe.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 20,
+    "question": "Co zawiera plik /etc/fstab?",
+    "options": [
+      "Statyczne tabele routingu",
+      "Konfigurację zapory sieciowej",
+      "Statyczne informacje o systemach plików i montowaniu",
+      "Ustawienia DNS"
+    ],
+    "correct_index": 2,
+    "category": "linux",
+    "explanation": "/etc/fstab (filesystem table) definiuje które partycje/urządzenia mają być montowane automatycznie przy starcie i z jakimi opcjami.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 21,
+    "question": "\"Które polecenie kopiuje plik z zachowaniem atrybutów (np. praw, dat)?\" ",
+    "options": [
+      "cp -r",
+      "cp -p",
+      "cp -f",
+      "cp -l"
+    ],
+    "correct_index": 1,
+    "category": "linux",
+    "explanation": "cp -p (preserve) zachowuje atrybuty pliku: uprawnienia, właściciela, timestampy. cp -r kopiuje rekurencyjnie.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 22,
+    "question": "Co oznacza pierwszy znak `-` w `-rwxr-xr-x`?",
+    "options": [
+      "To jest katalog",
+      "To jest zwykły plik",
+      "To jest dowiązanie",
+      "To jest urządzenie blokowe"
+    ],
+    "correct_index": 1,
+    "category": "linux",
+    "explanation": "Pierwszy znak to typ pliku: - (zwykły plik), d (katalog), l (dowiązanie), b (blokowe), c (znakowe).",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 23,
+    "question": "Jakie polecenie wyświetla informacje o CPU w systemie Linux?",
+    "options": [
+      "lscpu",
+      "cpuinfo",
+      "cat /proc/cpu",
+      "uname -cpu"
+    ],
+    "correct_index": 0,
+    "category": "linux",
+    "explanation": "lscpu wyświetla podsumowanie architektury CPU. cat /proc/cpuinfo daje szczegółowe info o każdym rdzeniu.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 24,
+    "question": "Jak sprawdzić wersję zainstalowanego jądra Linux?",
+    "options": [
+      "uname -r",
+      "kernel --version",
+      "cat /etc/kernel",
+      "lsmod | grep kernel"
+    ],
+    "correct_index": 0,
+    "category": "linux",
+    "explanation": "uname -r wyświetla wersję jądra (np. 6.8.5-200.fc40.x86_64). uname -a pokazuje wszystkie informacje o systemie.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 25,
+    "question": "Co to jest pamięć swap w Linux?",
+    "options": [
+      "Szyfrowana partycja systemowa",
+      "Przestrzeń na dysku używana jako wirtualna pamięć RAM",
+      "Kopia zapasowa systemu",
+      "Sieciowy system plików"
+    ],
+    "correct_index": 1,
+    "category": "system",
+    "explanation": "Swap to przestrzeń na dysku (partycja lub plik), którą jądro używa jako przedłużenie RAM – rzadko używane strony są przenoszone na swap.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 26,
+    "question": "Które polecenie wyświetla komunikaty jądra z pierścienia buforowego?",
+    "options": [
+      "dmesg",
+      "journalctl",
+      "syslog",
+      "kernlog"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "dmesg wyświetla bufor komunikatów jądra (ring buffer) – przydatne przy diagnostyce sprzętu i sterowników.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 27,
+    "question": "Jaka jest różnica między GRUB a systemd-boot?",
+    "options": [
+      "GRUB to bootloader, systemd-boot to init system",
+      "Oba to bootloadery, ale GRUB jest bardziej zaawansowany",
+      "systemd-boot to menedżer serwisów",
+      "Nie ma różnicy"
+    ],
+    "correct_index": 1,
+    "category": "system",
+    "explanation": "GRUB i systemd-boot to bootloadery. GRUB wspiera więcej schematów partycjonowania i konfiguracji, systemd-boot jest prostszy (UEFI tylko).",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 28,
+    "question": "Który katalog przechowuje logi systemowe na Fedorze/RHEL?",
+    "options": [
+      "/var/log",
+      "/var/syslog",
+      "/etc/log",
+      "/run/log"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "/var/log przechowuje logi systemowe (messages, secure, boot.log). journalctl czyta logi systemd-journald.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 29,
+    "question": "Co robi polecenie `sysctl -w kernel.hostname=server`?",
+    "options": [
+      "Zmienia nazwę hosta na stałe",
+      "Zmienia parametr jądra w czasie rzeczywistym",
+      "Wyświetla nazwę hosta",
+      "Restartuje serwer"
+    ],
+    "correct_index": 1,
+    "category": "system",
+    "explanation": "sysctl -w zmienia parametr jądra w locie (-w = write). Zmiana nie przetrwa restartu – aby była trwała, dodaj do /etc/sysctl.conf.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 30,
+    "question": "Jaka jest różnica między GPT a MBR?",
+    "options": [
+      "GPT obsługuje dyski >2TB i do 128 partycji, MBR do 2TB i 4 primary",
+      "MBR jest nowszy od GPT",
+      "GPT wymaga BIOS, MBR wymaga UEFI",
+      "Nie ma różnicy"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "GPT (GUID Partition Table) to nowszy standard: dyski >2TB, 128 partycji primary, redundantna tablica. MBR (DOS) obsługuje do 2TB i 4 partycje primary.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 31,
+    "question": "Co to jest initramfs?",
+    "options": [
+      "System plików montowany przed jądrem",
+      "Tymczasowy system plików używany podczas bootowania przed zamontowaniem rootfs",
+      "Kopia zapasowa init",
+      "Plik konfiguracyjny jądra"
+    ],
+    "correct_index": 1,
+    "category": "system",
+    "explanation": "initramfs (initial RAM filesystem) to tymczasowy system plików ładowany do pamięci podczas bootowania – zawiera moduły jądra niezbędne do zamontowania właściwego rootfs.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 32,
+    "question": "Które polecenie tworzy timeline snapshot procesów?",
+    "options": [
+      "top",
+      "htop",
+      "ps",
+      "atop"
+    ],
+    "correct_index": 3,
+    "category": "system",
+    "explanation": "atop rejestruje historię procesów i zasobów (CPU, RAM, dysk, sieć) w odstępach czasu – można cofać się w czasie. top/htop pokazują bieżący stan.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 33,
+    "question": "Co oznacza skrót MTU w sieciach?",
+    "options": [
+      "Maximum Transfer Unit – max rozmiar pakietu w warstwie sieci",
+      "Minimum Timeout Unit",
+      "Multi-Threaded Upload",
+      "Main Terminal Unit"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "MTU (Maximum Transmission Unit) to maksymalny rozmiar pakietu (zwykle 1500 bajtów dla Ethernet). Jeśli pakiet jest za duży, jest fragmentowany.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 34,
+    "question": "Jaki jest domyślny port dla HTTPS?",
+    "options": [
+      "80",
+      "443",
+      "22",
+      "8443"
+    ],
+    "correct_index": 1,
+    "category": "network",
+    "explanation": "HTTPS (HTTP Secure) domyślnie używa portu 443. HTTP – 80, SSH – 22.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 35,
+    "question": "Które polecenie wyświetla tablicę routingu IP?",
+    "options": [
+      "route -n",
+      "ip route",
+      "netstat -r",
+      "Wszystkie powyższe"
+    ],
+    "correct_index": 3,
+    "category": "network",
+    "explanation": "route -n, ip route i netstat -r wyświetlają tablicę routingu. ip route jest nowym zalecanym narzędziem.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 36,
+    "question": "Jaka jest różnica między TCP a UDP?",
+    "options": [
+      "TCP jest connection-oriented z gwarancją dostarczenia, UDP jest bezpołączeniowy",
+      "UDP jest szybszy ale zawodny",
+      "TCP wolniejszy ale niezawodny",
+      "Wszystkie powyższe są prawdziwe"
+    ],
+    "correct_index": 3,
+    "category": "network",
+    "explanation": "TCP: połączeniowy, potwierdzenia, retransmisja, gwarancja dostarczenia. UDP: bezpołączeniowy, brak potwierdzeń, szybszy ale zawodny – dobry do streamingu/DNS.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 37,
+    "question": "Co to jest NAT w kontekście sieci?",
+    "options": [
+      "Network Address Translation – tłumaczenie adresów prywatnych na publiczne",
+      "Narzędzie do skanowania sieci",
+      "Protokół routingu",
+      "System nazw domen"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "NAT (Network Address Translation) pozwala wielu urządzeniom w sieci lokalnej współdzielić jeden publiczny adres IP. Masquerade w iptables to forma NAT.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 38,
+    "question": "Co to jest DHCP lease?",
+    "options": [
+      "Czas, na jaki adres IP jest przydzielony klientowi DHCP",
+      "Umowa licencyjna DHCP",
+      "Dzierżawa serwera",
+      "Rejestr zapytań DHCP"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "DHCP lease (dzierżawa) to okres, na który serwer DHCP przydziela adres IP klientowi. Po wygaśnięciu klient musi odnowić dzierżawę.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 39,
+    "question": "Które narzędzie sieciowe pozwala na interaktywne zapytania DNS?",
+    "options": [
+      "nslookup",
+      "dig",
+      "host",
+      "Wszystkie powyższe"
+    ],
+    "correct_index": 3,
+    "category": "network",
+    "explanation": "nslookup, dig (Domain Information Groper) i host służą do zapytań DNS. dig daje najwięcej szczegółów i jest zalecany do diagnostyki.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 40,
+    "question": "Co robi polecenie `tcpdump -i eth0 port 80`?",
+    "options": [
+      "Wyświetla konfigurację interfejsu eth0",
+      "Przechwytuje pakiety na eth0 na porcie 80",
+      "Blokuje ruch na porcie 80",
+      "Wyświetla statystyki eth0"
+    ],
+    "correct_index": 1,
+    "category": "network",
+    "explanation": "tcpdump przechwytuje i wyświetla pakiety sieciowe. -i eth0 wybiera interfejs, 'port 80' filtruje ruch HTTP.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 41,
+    "question": "Co to jest hardening systemu?",
+    "options": [
+      "Proces zwiększania bezpieczeństwa przez konfigurację i usuwanie zbędnych usług",
+      "Instalacja nowego jądra",
+      "Formatowanie dysku",
+      "Aktualizacja pakietów"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "Hardening (utwardzanie) to proces zabezpieczania systemu: wyłączanie zbędnych usług, minimalizacja uprawnień, firewalle, polityki haseł, audyt.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 42,
+    "question": "Jakie są trzy tryby SELinux?",
+    "options": [
+      "On, Off, Auto",
+      "Enforcing, Permissive, Disabled",
+      "Active, Passive, Audit",
+      "Secure, Normal, Debug"
+    ],
+    "correct_index": 1,
+    "category": "security",
+    "explanation": "Enforcing – polityki są wymuszane. Permissive – loguje naruszenia ale nie blokuje. Disabled – SELinux wyłączony. Zmianę robi się przez /etc/selinux/config lub setenforce.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 43,
+    "question": "Do czego służy polecenie `ssh-keygen`?",
+    "options": [
+      "Generuje parę kluczy SSH (prywatny+publiczny)",
+      "Skanuje sieć w poszukiwaniu serwerów SSH",
+      "Testuje połączenie SSH",
+      "Wyświetla listę kluczy SSH"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "ssh-keygen generuje parę kluczy SSH (-t ed25519 lub -t rsa). Klucz publiczny (.pub) trafia na serwer do ~/.ssh/authorized_keys.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 44,
+    "question": "Co to jest GPG (GnuPG)?",
+    "options": [
+      "Narzędzie do szyfrowania i podpisywania cyfrowego",
+      "Menedżer haseł",
+      "System kontroli wersji",
+      "Generator certyfikatów SSL"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "GPG (Gnu Privacy Guard) implementuje OpenPGP do szyfrowania asymetrycznego i symetrycznego, podpisów cyfrowych i zarządzania kluczami.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 45,
+    "question": "Do czego służy `fail2ban`?",
+    "options": [
+      "Do banowania adresów IP po wielokrotnych nieudanych próbach logowania",
+      "Do szyfrowania połączeń",
+      "Do monitorowania CPU",
+      "Do backupu danych"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "fail2ban analizuje logi (SSH, Apache, itp.) i dodaje reguły iptables/firewalld blokujące adresy IP po wykryciu wielokrotnych błędnych logowań.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 46,
+    "question": "Co to są ACL w systemie Linux?",
+    "options": [
+      "Access Control Lists – szczegółowe listy kontroli dostępu dla plików",
+      "Advanced Configuration Language",
+      "Protokół uwierzytelniania",
+      "Narzędzie do monitorowania"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "ACL (Access Control Lists) rozszerzają standardowe uprawnienia rwx o możliwość przypisania praw konkretnym użytkownikom i grupom. setfacl/getfacl do zarządzania.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 47,
+    "question": "Jaka jest różnica między szyfrowaniem symetrycznym a asymetrycznym?",
+    "options": [
+      "Symetryczne: jeden klucz do szyfrowania i deszyfrowania. Asymetryczne: para kluczy (publiczny + prywatny)",
+      "Symetryczne jest bezpieczniejsze",
+      "Asymetryczne jest szybsze",
+      "Nie ma różnicy"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "Symetryczne (AES, ChaCha20): ten sam klucz do szyfr/deszyfr – szybkie. Asymetryczne (RSA, ECDSA): klucz publiczny do szyfrowania, prywatny do deszyfrowania – wolniejsze, ale nie wymaga bezpiecznego przesłania klucza.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 48,
+    "question": "Co robi polecenie `umask 027`?",
+    "options": [
+      "Ustawia maskę uprawnień: nowe pliki mają 640, katalogi 750",
+      "Usuwa wszystkie pliki tymczasowe",
+      "Wyświetla aktualną maskę",
+      "Blokuje dostęp do plików"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "umask (user mask) odejmuje uprawnienia od domyślnych (666 dla plików, 777 dla katalogów). 027 oznacza: --- -w- rwx = plik 640, katalog 750.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 49,
+    "question": "Co to jest atak MITM (Man-in-the-Middle)?",
+    "options": [
+      "Atak polegający na przechwyceniu komunikacji między dwiema stronami",
+      "Atak na serwer pocztowy",
+      "Atak typu DoS",
+      "Atak socjotechniczny"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "MITM (Man-in-the-Middle) – atakujący podsłuchuje i modyfikuje komunikację między dwiema stronami bez ich wiedzy. Zapobiega temu TLS/SSH z weryfikacją certyfikatów.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 50,
+    "question": "Jakie polecenie wyświetla certyfikat SSL/TLS serwera?",
+    "options": [
+      "openssl s_client -connect host:443",
+      "curl -I https://host",
+      "nmap -sV host -p 443",
+      "Wszystkie powyższe"
+    ],
+    "correct_index": 3,
+    "category": "security",
+    "explanation": "openssl s_client pokazuje pełny łańcuch certyfikatów. curl -I pokazuje nagłówki (w tym cert). nmap -sV wykrywa usługę i SSL.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 51,
+    "question": "Co robi polecenie `grep -r 'pattern' /etc/`?",
+    "options": [
+      "Szuka wzorca w plikach rekurencyjnie w katalogu /etc/",
+      "Usuwa pliki zawierające wzorzec",
+      "Wyświetla tylko nazwy plików",
+      "Liczy wystąpienia wzorca"
+    ],
+    "correct_index": 0,
+    "category": "shell",
+    "explanation": "grep -r (recursive) przeszukuje wszystkie pliki w katalogu i podkatalogach. grep -l wyświetla tylko nazwy plików. grep -c liczy wystąpienia.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 52,
+    "question": "Jaka jest różnica między $@ a $* w bashu?",
+    "options": [
+      "$@ zachowuje cudzysłowy argumentów, $* traktuje wszystko jako jeden string",
+      "$* zachowuje cudzysłowy, $@ nie",
+      "Nie ma różnicy",
+      "$@ to PID procesu, $* to argumenty"
+    ],
+    "correct_index": 0,
+    "category": "shell",
+    "explanation": "$@ zachowuje podział na argumenty (każdy w osobnych cudzysłowach). $* scala wszystkie argumenty w jeden string. To ma znaczenie przy iteracji.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 53,
+    "question": "Co robi operator `||` w bashu?",
+    "options": [
+      "Wykonuje drugie polecenie jeśli pierwsze zakończy się błędem (non-zero exit)",
+      "Łączy dwa polecenia równolegle",
+      "Wykonuje drugie polecenie jeśli pierwsze się powiedzie",
+      "Porównuje dwa stringi"
+    ],
+    "correct_index": 0,
+    "category": "shell",
+    "explanation": "|| (logiczne OR) wykonuje drugie polecenie tylko gdy pierwsze zwróci kod wyjścia != 0 (błąd). && wykonuje drugie tylko gdy poprzednie się powiodło.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 54,
+    "question": "Czym są stdin, stdout, stderr?",
+    "options": [
+      "Trzy domyślne strumienie danych w procesie: wejście, wyjście, błędy",
+      "Typami zmiennych w bashu",
+      "Flagami mount",
+      "Trybami SELinux"
+    ],
+    "correct_index": 0,
+    "category": "shell",
+    "explanation": "stdin (0) – wejście standardowe (klawiatura). stdout (1) – wyjście standardowe (terminal). stderr (2) – wyjście błędów (terminal). Przekierowanie: 2> do pliku.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 55,
+    "question": "Jak przekierować stderr do pliku?",
+    "options": [
+      "2> plik.txt",
+      "1> plik.txt",
+      "> plik.txt 2>&1",
+      "Zarówno A jak i C"
+    ],
+    "correct_index": 3,
+    "category": "shell",
+    "explanation": "2> plik przekierowuje stderr. 2>&1 przekierowuje stderr tam gdzie stdout. > plik 2>&1 zapisuje stdout i stderr do pliku.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 56,
+    "question": "Co robi `set -e` w skrypcie bash?",
+    "options": [
+      "Przerywa skrypt przy pierwszym błędzie (non-zero exit)",
+      "Wyświetla każde polecenie przed wykonaniem",
+      "Ustawia edytor",
+      "Włącza tryb interaktywny"
+    ],
+    "correct_index": 0,
+    "category": "shell",
+    "explanation": "set -e (errexit) powoduje natychmiastowe przerwanie skryptu jeśli jakiekolwiek polecenie zwróci kod błędu. set -x (xtrace) wyświetla polecenia przed wykonaniem.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 57,
+    "question": "Jak sprawdzić kod wyjścia ostatniego polecenia w bashu?",
+    "options": [
+      "echo $?",
+      "echo $!",
+      "echo $0",
+      "echo $STATUS"
+    ],
+    "correct_index": 0,
+    "category": "shell",
+    "explanation": "$? przechowuje kod wyjścia (exit code) ostatnio wykonanego polecenia (0 = sukces, 1-255 = błąd). $! to PID ostatniego procesu w tle.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 58,
+    "question": "Jaka jest różnica między `[ ]` a `[[ ]]` w bashu?",
+    "options": [
+      "[[ ]] to rozszerzone testowanie z && || i porównaniami, [ ] to standard POSIX",
+      "[ ] jest nowsze od [[ ]]",
+      "Nie ma różnicy",
+      "[[ ]] działa tylko w sh"
+    ],
+    "correct_index": 0,
+    "category": "shell",
+    "explanation": "[[ ]] to bash-builtin z większymi możliwościami: && || wewnątrz, porównania wzorców (== jako pattern), brak problemów z pustymi zmiennymi. [ ] to starszy POSIX test.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 59,
+    "question": "Co robi polecenie `xargs`?",
+    "options": [
+      "Buduje i wykonuje polecenia z danych wejściowych (stdin)",
+      "Wyświetla argumenty",
+      "Kasuje zmienne",
+      "Tworzy archiwum"
+    ],
+    "correct_index": 0,
+    "category": "shell",
+    "explanation": "xargs czyta dane ze stdin i przekazuje je jako argumenty do podanego polecenia. Np. find . -name '*.tmp' | xargs rm – usunie wszystkie znalezione pliki.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 60,
+    "question": "Co to jest Docker volume?",
+    "options": [
+      "Trwały magazyn danych zarządzany przez Docker, niezależny od cyklu życia kontenera",
+      "Partycja na dysku dla Dockera",
+      "Katalog tymczasowy kontenera",
+      "Migawka obrazu Docker"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Docker volume to trwały magazyn danych poza warstwą zapisywalną kontenera. Volume lives beyond container – dane nie giną przy usunięciu kontenera. Bind mount też jest opcją.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 61,
+    "question": "Jaka jest różnica między Docker a Podman?",
+    "options": [
+      "Podman nie wymaga demona (daemonless) i może działać bez roota",
+      "Docker jest daemonless",
+      "Podman nie wspiera obrazów Docker",
+      "Nie ma różnicy"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Podman (Pod Manager) – bez daemona, bez roota (rootless), kompatybilny z Docker CLI. Docker wymaga dockerd (demon) i roota do domyślnej pracy.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 62,
+    "question": "Co to jest Pod w Kubernetes?",
+    "options": [
+      "Najmniejsza jednostka w K8s – jeden lub więcej kontenerów współdzielących sieć i storage",
+      "Grupą serwerów",
+      "Plik konfiguracyjny K8s",
+      "Narzędzie do monitorowania"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Pod to najmniejsza jednostka w Kubernetes. Zawiera jeden lub więcej kontenerów, które współdzielą IP, porty, wolumeny. Zwykle 1 pod = 1 kontener (sidecar pattern wyjątkiem).",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 63,
+    "question": "Do czego służy Ansible playbook?",
+    "options": [
+      "Do definiowania zadań konfiguracyjnych w YAML wykonywanych na zdalnych hostach",
+      "Do budowania obrazów Docker",
+      "Do kompilacji jądra",
+      "Do backupu bazy danych"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Ansible playbook (YAML) definiuje zestaw zadań (tasks) do wykonania na zarządzanych hostach – instalacja pakietów, kopiowanie plików, uruchamianie serwisów.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 64,
+    "question": "Co oznacza Infrastructure as Code (IaC)?",
+    "options": [
+      "Zarządzanie infrastrukturą przez pliki konfiguracyjne zamiast ręcznych poleceń",
+      "Kodowanie infrastruktury w C++",
+      "Używanie tylko chmury",
+      "Automatyczne skalowanie"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "IaC to praktyka definiowania infrastruktury (serwery, sieci, bazy) w plikach konfiguracyjnych (Terraform, Ansible, CloudFormation) – wersjonowanie, powtarzalność, automatyzacja.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 65,
+    "question": "Jaka jest różnica między CI a CD?",
+    "options": [
+      "CI (Continuous Integration) – automatyzacja testowania i budowania. CD (Continuous Delivery/Deployment) – automatyzacja wdrażania",
+      "CI to to samo co CD",
+      "CI dotyczy tylko aplikacji webowych",
+      "CD to narzędzie do backupu"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "CI: każda zmiana kodu jest automatycznie testowana i budowana. CD: po przejściu CI kod jest automatycznie wdrażany na środowiska (staging/production).",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 66,
+    "question": "Co to jest Terraform state?",
+    "options": [
+      "Plik stanu przechowujący mapowanie zasobów między konfiguracją a rzeczywistą infrastrukturą",
+      "Stan konta w chmurze",
+      "Stan serwera",
+      "Licencja Terraform"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Terraform state (terraform.tfstate) to plik JSON mapujący zasoby zdefiniowane w kodzie na rzeczywiste zasoby w chmurze – niezbędny do planowania zmian i zarządzania cyklem życia.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 67,
+    "question": "Co to jest container orchestration?",
+    "options": [
+      "Automatyczne zarządzanie kontenerami: skalowanie, networking, health checks, rolling updates",
+      "Ręczne uruchamianie kontenerów",
+      "Budowanie obrazów",
+      "Pullowanie obrazów"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Container orchestration (orkiestracja kontenerów) – Kubernetes, Docker Swarm, Nomad – zarządza cyklem życia kontenerów: deployment, skalowanie, networking, load balancing, self-healing.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 68,
+    "question": "Które polecenie buduje obraz Docker z Dockerfile?",
+    "options": [
+      "docker build -t nazwa:tag .",
+      "docker create -t nazwa:tag .",
+      "docker run -t nazwa:tag .",
+      "docker compose build nazwa:tag ."
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "docker build czyta Dockerfile w bieżącym katalogu (.) i buduje obraz z tagiem. docker run uruchamia kontener z obrazu. docker compose build buduje z docker-compose.yml.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 69,
+    "question": "Co to jest GitOps?",
+    "options": [
+      "Praktyka używania repozytorium Git jako jedynego źródła prawdy (single source of truth) dla infrastruktury i aplikacji",
+      "Używanie Git do backupu",
+      "Kurs Gita",
+      "Narzędzie do review kodu"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "GitOps: repozytorium Git zawiera całą konfigurację – zmiany są wprowadzane przez pull requesty, automatycznie synchronizowane z klastrem (Argo CD, Flux).",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 70,
+    "question": "Które polecenie wyświetla logi tylko z bieżącego bootowania w systemd-journald?",
+    "options": [
+      "journalctl -b",
+      "journalctl -f",
+      "journalctl -u",
+      "journalctl --list-boots"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "journalctl -b (--boot) pokazuje logi z obecnego rozruchu. -f follow, -u dla jednostki, --list-boots wyświetla listę bootów.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 71,
+    "question": "Jak sprawdzić domyślny target systemd?",
+    "options": [
+      "systemctl get-default",
+      "systemctl list-units",
+      "systemctl default",
+      "systemctl --target"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "systemctl get-default pokazuje aktywny domyślny target przy starcie systemu. systemctl set-default zmienia go.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 72,
+    "question": "Który plik konfiguracyjny GRUB2 należy edytować, aby zmienić parametry jądra?",
+    "options": [
+      "/etc/default/grub",
+      "/boot/grub2/grub.cfg",
+      "/etc/grub.d/",
+      "/etc/grub.conf"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "/etc/default/grub zawiera zmienne konfiguracyjne (GRUB_CMDLINE_LINUX). Po edycji uruchom grub2-mkconfig, aby wygenerować /boot/grub2/grub.cfg.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 73,
+    "question": "Jak dodać parametr 'single' do jądra podczas rozruchu GRUB2, aby zresetować hasło root?",
+    "options": [
+      "Nacisnąć 'e' na wpisie boot, dopisać 'rd.break' lub 'single' do linii linux, Ctrl+X",
+      "Wpisać 'reset root' w konsoli GRUB",
+      "Uruchomić z pendrive'a instalacyjnego",
+      "Nacisnąć 'c' i wpisać 'boot --single'"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "W GRUB2 naciskasz 'e', edytujesz linię linux (linuxefi), dodajesz 'rd.break' (RHEL) lub 'single', Ctrl+X aby uruchomić. Następnie mount -o remount,rw /sysroot && chroot /sysroot && passwd.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 74,
+    "question": "Jaka jest poprawna składnia pętli for w bashu iterującej po plikach .txt?",
+    "options": [
+      "for f in *.txt; do echo \"$f\"; done",
+      "for (f in *.txt) { echo $f }",
+      "foreach f in *.txt: echo $f",
+      "for f=1 to *.txt do echo $f"
+    ],
+    "correct_index": 0,
+    "category": "shell",
+    "explanation": "for zmienna in wzorzec; do ... done – bash używa średników i done. Druga opcja to składnia C, trzecia to Python, czwarta to pseudokod.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 75,
+    "question": "Który port używa NFSv4 z domyślnym serwerem?",
+    "options": [
+      "TCP 2049",
+      "TCP 111",
+      "TCP 445",
+      "TCP 22"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "NFSv4 używa domyślnie TCP 2049. Portmapper (rpcbind) to 111. Samba (CIFS) to 445. SSH to 22.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 76,
+    "question": "Jak sprawdzić status synchronizacji czasu z serwerem NTP w chronyd?",
+    "options": [
+      "chronyc sources",
+      "chronyc tracking",
+      "timedatectl status",
+      "Wszystkie powyższe"
+    ],
+    "correct_index": 3,
+    "category": "system",
+    "explanation": "chronyc sources pokazuje źródła NTP, chronyc tracking – szczegóły synchronizacji, timedatectl status – ogólny stan czasu. Wszystkie są przydatne.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 77,
+    "question": "Jaka jest domyślna strona startowa Apache httpd na RHEL?",
+    "options": [
+      "/var/www/html/index.html",
+      "/usr/share/httpd/noindex/index.html",
+      "/etc/httpd/conf.d/welcome.conf",
+      "/srv/http/index.html"
+    ],
+    "correct_index": 1,
+    "category": "network",
+    "explanation": "Na RHEL/Fedora domyślna strona testowa Apache to /usr/share/httpd/noindex/index.html. Główny DocumentRoot to /var/www/html, ale początkowo jest pusty.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 78,
+    "question": "Które polecenie ładuje moduł jądra na stałe (bez rebootu i po restarcie)?",
+    "options": [
+      "modprobe + wpis w /etc/modules-load.d/",
+      "insmod tylko",
+      "rmmod",
+      "lsmod"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "modprobe ładuje moduł z zależnościami. Aby ładował się przy starcie, dodaj go do pliku w /etc/modules-load.d/. insmod ładuje bez zależności, rmmod usuwa, lsmod wyświetla.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 79,
+    "question": "Czym systemd timer różni się od cron?",
+    "options": [
+      "Timer może uruchomić zadanie z dokładnością do sekundy, wspiera kalendarz, monotoniczne wyzwalacze i logowanie do journald",
+      "Cron jest dokładniejszy",
+      "Timer nie wspiera dni tygodnia",
+      "Nie ma różnicy"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "Systemd timer ma: dokładność do sekundy (cron – minuta), kalendarz (OnCalendar=), monotonic (OnBootSec=), pełne logowanie do journald i zależności między jednostkami.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 80,
+    "question": "Jak uruchomić kontener Podman jako usługę systemd dla użytkownika?",
+    "options": [
+      "podman generate systemd --name kontener > ~/.config/systemd/user/ && systemctl --user daemon-reload && systemctl --user enable --now kontener",
+      "docker run -d --restart=always kontener",
+      "systemctl start podman-kontener",
+      "Wrzucić skrypt do /etc/rc.local"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "podman generate systemd generuje plik jednostki. Skopiuj do ~/.config/systemd/user/, potem systemctl --user daemon-reload && enable --now. Dla system-wide użyj --system.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 81,
+    "question": "Do czego służy LVM snapshot?",
+    "options": [
+      "Tworzy punkt przywracania (kopię różnicową) woluminu logicznego w momencie wykonania",
+      "Zwiększa wydajność dysku",
+      "Zabezpiecza przed atakami",
+      "Szyfruje partycję"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "LVM snapshot tworzy kopię różnicową (COW – copy-on-write) w momencie wykonania. Przydatne do backupu i testowania aktualizacji. lvcreate -s -n snap -L 1G /dev/vg/lv_root.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 82,
+    "question": "Które polecenie wyświetla booleany SELinux w trybie enforcing?",
+    "options": [
+      "getsebool -a",
+      "semanage boolean -l",
+      "setsebool -P",
+      "seinfo -b"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "getsebool -a wyświetla wszystkie booleany i ich stan. setsebool zmienia, semanage boolean -l też działa (wyświetla z opisem). seinfo -b wyświetla z libsefs.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 83,
+    "question": "Który plik logu systemowego należy sprawdzić w pierwszej kolejności przy awarii bootowania?",
+    "options": [
+      "journalctl -b -p err",
+      "/var/log/messages",
+      "/var/log/dmesg",
+      "/var/log/boot.log"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "journalctl -b -p err pokazuje błędy z obecnego boota. /var/log/messages (tam rsyslog) i dmesg też przydatne, ale journalctl -b -p err jest najszybszy przy diagnozowaniu.",
+    "stage": 0,
+    "hint": null
+  },
+  {
+    "id": 84,
+    "question": "Który parametr w /etc/ssh/sshd_config wyłącza logowanie root przez hasło?",
+    "options": [
+      "PermitRootLogin prohibit-password",
+      "RootLogin no",
+      "DisableRootLogin yes",
+      "DenyRoot yes"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "PermitRootLogin prohibit-password (lub without-password w starszych wersjach) zezwala na logowanie root tylko przez klucz SSH, blokując hasło. To standardowa rekomendacja bezpieczeństwa.",
+    "stage": 2,
+    "hint": "Sprawdź opcje PermitRootLogin w man sshd_config – jest ich kilka: yes, prohibit-password, without-password, no"
+  },
+  {
+    "id": 85,
+    "question": "Które polecenie przekierowuje zarówno standardowe wyjście (stdout) jak i standardowy błąd (stderr) do pliku?",
+    "options": [
+      "command >& file",
+      "command &> file",
+      "command 2>&1 file",
+      "command > file 2>&1"
+    ],
+    "correct_index": 3,
+    "category": "shell",
+    "explanation": "command > file 2>&1 przekierowuje stdout do pliku, a stderr (2) tam gdzie stdout (1). &> jest skrótem w bash. Kolejność ma znaczenie – 2>&1 musi być po > file.",
+    "stage": 1,
+    "hint": "Pamiętaj o kolejności: najpierw przekieruj stdout (> file), potem stderr do stdout (2>&1). W bash możesz też użyć &>"
+  },
+  {
+    "id": 86,
+    "question": "Chcesz ustawić zmienną lokalną dostępną dla każdego użytkownika w każdej sesji powłoki. Który plik zmodyfikować?",
+    "options": [
+      "/etc/profile",
+      "~/.bashrc",
+      "/etc/environment",
+      "~/.bash_profile"
+    ],
+    "correct_index": 0,
+    "category": "shell",
+    "explanation": "/etc/profile jest wykonywany dla wszystkich użytkowników przy logowaniu (login shell). ~/.bashrc dotyczy tylko jednego użytkownika i interaktywnych shelli.",
+    "stage": 1,
+    "hint": "Zmienne globalne dla wszystkich użytkowników ustawia się w /etc/profile lub /etc/environment. Zmienne tylko dla Ciebie – w ~/.bashrc"
+  },
+  {
+    "id": 87,
+    "question": "Użytkownik stworzył skrypt o nazwie 'myscript' z uprawnieniami execute, ale nie może go uruchomić komendą 'myscript'. Jaki jest najprawdopodobniejszy powód?",
+    "options": [
+      "W środku skryptu jest błąd składniowy",
+      "Katalog zawierający skrypt nie znajduje się w PATH",
+      "Skrypt ma rozszerzenie .sh",
+      "Użytkownik nie jest rootem"
+    ],
+    "correct_index": 1,
+    "category": "shell",
+    "explanation": "Shell szuka poleceń w katalogach z PATH. Jeśli skrypt nie jest w PATH, uruchom go przez ./myscript (bieżący katalog) lub podaj pełną ścieżkę.",
+    "stage": 1,
+    "hint": "Sprawdź jakie katalogi są w PATH: echo $PATH. Jeśli twojego katalogu tam nie ma, uruchom skrypt przez ./myscript"
+  },
+  {
+    "id": 88,
+    "question": "Który skrót klawiszowy w Vimie zapisuje plik i wychodzi z edytora?",
+    "options": [
+      ":q",
+      ":wq",
+      ":x",
+      "Zarówno :wq jak i :x"
+    ],
+    "correct_index": 3,
+    "category": "shell",
+    "explanation": ":wq (write + quit) i :x (exit, zapisuje jeśli były zmiany) oba zapisują i wychodzą. :q tylko wychodzi (jeśli brak zmian), :q! wychodzi bez zapisu.",
+    "stage": 1,
+    "hint": "W Vimie komendy zaczynają się od :. Tryby: normalny (ESC), insert (i), command (:)"
+  },
+  {
+    "id": 89,
+    "question": "Które polecenie wyświetla podręcznik (manual) dla komendy 'tar'?",
+    "options": [
+      "help tar",
+      "man tar",
+      "info tar",
+      "Zarówno man tar jak i info tar"
+    ],
+    "correct_index": 3,
+    "category": "shell",
+    "explanation": "man (manual) i info to dwa systemy dokumentacji. man jest starszy i bardziej powszechny, info ma hiperłącza. help działa tylko dla builtinów bash.",
+    "stage": 1,
+    "hint": "man to podstawa – zawsze możesz sprawdzić składnię komendy. man -k słowo_kluczowe szuka komend związanych z tematem"
+  },
+  {
+    "id": 90,
+    "question": "Co zrobić z kontem root, aby zwiększyć bezpieczeństwo systemu?",
+    "options": [
+      "Nie ustawiać hasła root",
+      "Dodać root do grupy wheel",
+      "Usunąć konto root",
+      "Wyłączyć logowanie SSH dla roota (PermitRootLogin no)"
+    ],
+    "correct_index": 3,
+    "category": "security",
+    "explanation": "Wyłączenie logowania SSH dla root wymusza używanie sudo i logowanie na zwykłe konto. Root nadal istnieje, ale nie można go użyć zdalnie.",
+    "stage": 2,
+    "hint": "Najlepsza praktyka: PermitRootLogin no w sshd_config + sudo dla adminów przez grupę wheel"
+  },
+  {
+    "id": 91,
+    "question": "Której grupy musi być członkiem użytkownik, aby móc używać sudo do wszystkich komend administracyjnych na domyślnym RHEL?",
+    "options": [
+      "admin",
+      "root",
+      "sys",
+      "wheel"
+    ],
+    "correct_index": 3,
+    "category": "system",
+    "explanation": "Na RHEL/Fedora grupa 'wheel' ma uprawnienia sudo do wszystkich komend (wpis w /etc/sudoers: %wheel ALL=(ALL) ALL). Na Ubuntu to grupa 'sudo'.",
+    "stage": 1,
+    "hint": "Sprawdź /etc/sudoers lub /etc/sudoers.d/ – tam jest zdefiniowane kto ma prawo do sudo"
+  },
+  {
+    "id": 92,
+    "question": "Który wpis w sudoers pozwala użytkownikowi 'amy' zmieniać hasła wszystkim oprócz root?",
+    "options": [
+      "amy ALL=/usr/bin/passwd, !/usr/bin/passwd root",
+      "amy ALL=passwd, !passwd root",
+      "amy ALL=!/usr/bin/passwd root, /usr/bin/passwd",
+      "amy ALL=PASSWD, !PASSWD ROOT"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "! przed ścieżką to negacja (wykluczenie). Kolejność ma znaczenie: najpierw zezwolenie na passwd, potem wykluczenie passwd root. Ścieżki muszą być absolutne.",
+    "stage": 3,
+    "hint": "W sudoers ! oznacza 'oprócz'. Kolejność reguł ma znaczenie – pierwsze pasujące zezwolenie wygrywa"
+  },
+  {
+    "id": 93,
+    "question": "Które polecenie dodaje użytkownika 'linda' do grupy 'wheel' jako grupę uzupełniającą (supplementary)?",
+    "options": [
+      "usermod -g wheel linda",
+      "usermod -aG wheel linda",
+      "groupadd -u linda wheel",
+      "passwd -a linda wheel"
+    ],
+    "correct_index": 1,
+    "category": "system",
+    "explanation": "usermod -aG wheel linda: -a (append) zapobiega usunięciu z innych grup, -G (supplementary groups). Bez -a zastąpisz wszystkie grupy uzupełniające!",
+    "stage": 2,
+    "hint": "Zawsze używaj -a (append) razem z -G, inaczej usuniesz użytkownika z innych grup!"
+  },
+  {
+    "id": 94,
+    "question": "Użytkownik chce pracować w sesji, gdzie wszystkie nowe pliki będą należeć do grupy 'sales'. Które polecenie to umożliwia?",
+    "options": [
+      "chgrp sales",
+      "setgid sales",
+      "newgrp sales",
+      "setgroup sales"
+    ],
+    "correct_index": 2,
+    "category": "system",
+    "explanation": "newgrp sales uruchamia nową podshell z grupą 'sales' jako podstawową (effective). Chwilowo zmienia grupę dla nowych plików. setgid to bit uprawnienia na katalogu.",
+    "stage": 2,
+    "hint": "newgrp zmienia grupę podstawową w bieżącej sesji. exit wraca do oryginalnej grupy"
+  },
+  {
+    "id": 95,
+    "question": "Które polecenie znajduje wszystkie pliki należące do użytkownika 'linda'?",
+    "options": [
+      "find / -user linda",
+      "find / -uid linda",
+      "ls -l | grep linda",
+      "ls -R | find linda"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "find / -user linda przeszukuje system plików od / szukając plików których właścicielem jest linda. -uid szuka po numerze UID. ls -l | grep jest nieefektywne i niepełne.",
+    "stage": 2,
+    "hint": "find ma wiele opcji: -user, -group, -perm, -size, -mtime. Używaj -user do szukania po nazwie użytkownika"
+  },
+  {
+    "id": 96,
+    "question": "Które polecenie NIE ustawia grupy 'sales' dla pliku 'myfile'?",
+    "options": [
+      "chgrp sales myfile",
+      "chown .sales myfile",
+      "chgrp myfile sales",
+      "chown :sales myfile"
+    ],
+    "correct_index": 2,
+    "category": "system",
+    "explanation": "chgrp myfile sales ma odwróconą składnię: poprawnie to chgrp sales myfile (grupa jako pierwszy argument). chown :sales myfile i chown .sales myfile są poprawne.",
+    "stage": 1,
+    "hint": "Składnia chgrp: chgrp GRUPA PLIK, a nie chgrp PLIK GRUPA. chown :GRUPA PLIK też działa"
+  },
+  {
+    "id": 97,
+    "question": "Która z poniższych NIE jest zaletą GPT nad MBR?",
+    "options": [
+      "Szybszy czas dostępu do katalogu",
+      "Obsługa do 8 ZiB na partycję",
+      "Automatyczna kopia zapasowa tablicy partycji",
+      "Do 128 partycji"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "GPT ma: 128 partycji (vs 4 primary MBR), obsługa dysków >2TB (do 8 ZiB), redundantna tablica partycji. Szybkość dostępu nie zależy od typu tablicy partycji.",
+    "stage": 2,
+    "hint": "MBR: maks 2TB, 4 partycje primary. GPT: do 128 partycji, dyski >2TB, backup tablicy partycji"
+  },
+  {
+    "id": 98,
+    "question": "Które stwierdzenie o GPT NIE jest prawdziwe?",
+    "options": [
+      "Można przekonwertować MBR na GPT przez gdisk",
+      "fdisk może zapisać tablicę GPT",
+      "Typy partycji w GPT mają 4 znaki zamiast 2",
+      "GPT działa tylko na systemach EFI"
+    ],
+    "correct_index": 3,
+    "category": "system",
+    "explanation": "GPT działa na BIOS (poprzez protective MBR) i na UEFI. gdisk konwertuje MBR→GPT. fdisk obsługuje GPT od util-linux 2.24. GPT ma 4-znakowe kody typów (np. 0FC63DAF) vs 2-znakowe w MBR (np. 83).",
+    "stage": 3,
+    "hint": "GPT nie wymaga UEFI – może działać z BIOS, ale nie może bootować z BIOS. Do bootowania z GPT potrzebujesz UEFI lub GRUB BIOS+GPT"
+  },
+  {
+    "id": 99,
+    "question": "Jaki typ partycji jest powszechnie używany na swap w fdisk/gdisk?",
+    "options": [
+      "82 (Linux swap)",
+      "83 (Linux)",
+      "8e (Linux LVM)",
+      "fd (Linux RAID)"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "W MBR: 82 = Linux swap, 83 = Linux filesystem, 8e = Linux LVM, fd = Linux RAID. W GPT kody są 4-znakowe: 0657FD6D = swap.",
+    "stage": 2,
+    "hint": "swap ma zawsze osobny typ partycji – w MBR to 82, w GPT to UUID 0657FD6D"
+  },
+  {
+    "id": 100,
+    "question": "Które polecenie wyświetla informację o wolumenach logicznych LVM?",
+    "options": [
+      "lvdisplay",
+      "lvs",
+      "lvscan",
+      "Wszystkie powyższe"
+    ],
+    "correct_index": 3,
+    "category": "system",
+    "explanation": "lvdisplay – szczegółowe info, lvs – skondensowane podsumowanie (lepsze do skryptów), lvscan – skanuje system. pvdisplay/pvs dla PV, vgdisplay/vgs dla VG.",
+    "stage": 2,
+    "hint": "lvs daje najczytelniejsze podsumowanie. Użyj lvdisplay dla szczegółów jednego LV"
+  },
+  {
+    "id": 101,
+    "question": "Która opcja pozwala wyłączyć SELinux w RHEL 9?",
+    "options": [
+      "setenforce 0 z konsoli root",
+      "Argument bootowy GRUB: selinux=0",
+      "SELINUX=disabled w /etc/selinux/config",
+      "Usunięcie pakietów SELinux przez dnf"
+    ],
+    "correct_index": 2,
+    "category": "security",
+    "explanation": "Trwałe wyłączenie: ustaw SELINUX=disabled w /etc/selinux/config i reboot. setenforce 0 to tryb Permissive (tymczasowo). selinux=0 w GRUB też działa ale to brute force.",
+    "stage": 2,
+    "hint": "NIGDY nie wyłączaj SELinux na stałe. Użyj Permissive do debugowania, potem wróć do Enforcing"
+  },
+  {
+    "id": 102,
+    "question": "Które polecenia pokazują aktualny tryb SELinux? (wybierz dwa)",
+    "options": [
+      "sestatus",
+      "lsmode",
+      "semode",
+      "getenforce"
+    ],
+    "correct_index": 3,
+    "category": "security",
+    "explanation": "sestatus i getenforce pokazują tryb SELinux. getenforce zwraca: Enforcing, Permissive lub Disabled. sestatus daje więcej szczegółów (policy, booleany).",
+    "stage": 1,
+    "hint": "getenforce – szybkie sprawdzenie. sestatus – szczegółowe info o SELinux"
+  },
+  {
+    "id": 103,
+    "question": "Który element etykiety kontekstu SELinux jest najważniejszy dla zadań administracyjnych?",
+    "options": [
+      "Type (typ)",
+      "User (użytkownik SELinux)",
+      "Role (rola)",
+      "Mission (misja)"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "Type (np. httpd_t, httpd_sys_content_t) jest kluczowy – to on określa czy proces może uzyskać dostęp do pliku. SELinux to głównie Type Enforcement (TE). User/Role są rzadziej używane.",
+    "stage": 2,
+    "hint": "Kontekst SELinux: user:role:type:level. W praktyce najważniejsze jest type – np. httpd_t vs httpd_sys_content_t"
+  },
+  {
+    "id": 104,
+    "question": "Która flaga jest używana z wieloma komendami do wyświetlania informacji SELinux?",
+    "options": [
+      "-S",
+      "-X",
+      "-Z",
+      "-D"
+    ],
+    "correct_index": 2,
+    "category": "security",
+    "explanation": "Flaga -Z (SELinux context) działa z ls, ps, id, cp, mv itd. ls -Z pokazuje kontekst SELinux plików. ps auxZ pokazuje konteksty procesów. id -Z pokazuje kontekst użytkownika.",
+    "stage": 2,
+    "hint": "Zapamiętaj: -Z zawsze pokazuje SELinux. ls -Z, ps auxZ, id -Z – to podstawa diagnostyki"
+  },
+  {
+    "id": 105,
+    "question": "Która z poniższych NIE jest standardową strefą firewalld?",
+    "options": [
+      "untrusted",
+      "trusted",
+      "external",
+      "internal"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "Domyślne strefy firewalld: drop, block, public, external, dmz, work, home, internal, trusted. 'untrusted' nie istnieje – odpowiednikiem jest 'drop' lub 'block'.",
+    "stage": 2,
+    "hint": "firewall-cmd --get-zones pokazuje wszystkie dostępne strefy. Domyślnie: public (aktywna)"
+  },
+  {
+    "id": 106,
+    "question": "Jak nazywa się serwer firewalla zaimplementowany w jądrze Linux?",
+    "options": [
+      "iptables",
+      "firewalld",
+      "netfilter",
+      "firewall-mod"
+    ],
+    "correct_index": 2,
+    "category": "network",
+    "explanation": "Netfilter to framework w jądrze Linux odpowiedzialny za filtrowanie pakietów. iptables/nftables to narzędzia userspace do zarządzania regułami netfilter. firewalld to usługa na nich oparta.",
+    "stage": 2,
+    "hint": "Netfilter → jądro. iptables/nftables → narzędzia. firewalld → usługa zarządzająca"
+  },
+  {
+    "id": 107,
+    "question": "Które polecenie wyświetla wszystkie dostępne usługi firewalld?",
+    "options": [
+      "firewall-cmd --list-services",
+      "firewall-cmd --list-all",
+      "firewall-cmd --get-services",
+      "firewall-cmd --show-services"
+    ],
+    "correct_index": 2,
+    "category": "network",
+    "explanation": "--get-services pokazuje listę wszystkich predefiniowanych usług (w /usr/lib/firewalld/services/). --list-services pokazuje aktywne w bieżącej strefie. --list-all pokazuje pełną konfigurację strefy.",
+    "stage": 2,
+    "hint": "--get-services → wszystkie dostępne. --list-services → tylko aktywne w strefie"
+  },
+  {
+    "id": 108,
+    "question": "Od czego zależy sukces kontenerów? Która technologia NIE jest kluczowa?",
+    "options": [
+      "Cgroups",
+      "Semaphores",
+      "Namespaces",
+      "SELinux"
+    ],
+    "correct_index": 1,
+    "category": "devops",
+    "explanation": "Kontenery używają: cgroups (limitowanie zasobów), namespaces (izolacja procesów/sieci/fs), SELinux (dodatkowe bezpieczeństwo). Semafory (semaphores) to mechanizm synchronizacji procesów, nie związany z konteneryzacją.",
+    "stage": 3,
+    "hint": "Kontenery = cgroups + namespaces + (opcjonalnie) SELinux. Semafory to zupełnie inna koncepcja IPC"
+  },
+  {
+    "id": 109,
+    "question": "Jak nazywa się rozwiązanie Red Hat dodające funkcje enterprise (skalowalność, HA) do kontenerów?",
+    "options": [
+      "OpenStack",
+      "OpenShift",
+      "Kubernetes",
+      "JBoss"
+    ],
+    "correct_index": 1,
+    "category": "devops",
+    "explanation": "OpenShift to platforma kontenerowa Red Hat zbudowana na Kubernetes, dodająca: routing, monitoring, CI/CD, zarządzanie użytkownikami, HA. OpenStack to chmura IaaS, JBoss to serwer aplikacji.",
+    "stage": 3,
+    "hint": "Red Hat OpenShift = Kubernetes + enterprise features. To flagowy produkt kontenerowy Red Hat"
+  },
+  {
+    "id": 110,
+    "question": "Jak odłączyć się od działającego kontenera bez zamykania go?",
+    "options": [
+      "exit",
+      "quit",
+      "detach",
+      "Ctrl+P, Ctrl+Q"
+    ],
+    "correct_index": 3,
+    "category": "devops",
+    "explanation": "W Podman/Docker Ctrl+P następnie Ctrl+Q odłącza terminal od kontenera bez zatrzymywania go (detach). exit zamyka proces w kontenerze, co go zatrzymuje.",
+    "stage": 2,
+    "hint": "Sekwencja detach: Ctrl+P, Ctrl+Q (nie jednocześnie, po kolei). Domyślnie w Podman/Docker"
+  },
+  {
+    "id": 111,
+    "question": "Który plik konfiguracyjny Apache httpd jest głównym plikiem konfiguracyjnym na RHEL?",
+    "options": [
+      "/etc/httpd/httpd.conf",
+      "/etc/httpd/conf/httpd.conf",
+      "/etc/apache2/apache2.conf",
+      "/etc/httpd/conf.d/00-default.conf"
+    ],
+    "correct_index": 1,
+    "category": "network",
+    "explanation": "Główny plik konfiguracyjny Apache na RHEL to /etc/httpd/conf/httpd.conf. Dodatkowe pliki .conf w /etc/httpd/conf.d/ są automatycznie wczytywane. Na Debian to /etc/apache2/apache2.conf.",
+    "stage": 2,
+    "hint": "Na RHEL: /etc/httpd/conf/httpd.conf + /etc/httpd/conf.d/*.conf. Na Debian: /etc/apache2/"
+  },
+  {
+    "id": 112,
+    "question": "Które polecenie systemd wyświetla wszystkie uruchomione serwisy?",
+    "options": [
+      "systemctl list-units --type=service",
+      "systemctl list-services",
+      "systemctl --running",
+      "systemctl show-services"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "systemctl list-units --type=service pokazuje wszystkie uruchomione serwisy. systemctl list-units --all --type=service pokazuje wszystkie (w tym nieaktywne).",
+    "stage": 2,
+    "hint": "systemctl list-units --type=service – szybki podgląd. Dodaj --all by zobaczyć też nieaktywne"
+  },
+  {
+    "id": 113,
+    "question": "Jak sprawdzić dziennik (log) konkretnej jednostki systemd?",
+    "options": [
+      "journalctl -u nazwa.jednostki",
+      "systemctl log nazwa.jednostki",
+      "journalctl --service nazwa.jednostki",
+      "logctl -u nazwa.jednostki"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "journalctl -u nazwa.service pokazuje logi dla konkretnej jednostki systemd. Możesz dodać -f (follow), --since today, -p err (tylko błędy).",
+    "stage": 1,
+    "hint": "journalctl -u nazwa -f – podgląd logów w czasie rzeczywistym dla danego serwisu"
+  },
+  {
+    "id": 114,
+    "question": "Które polecenie uruchamia kontener w tle (detached) z Podman?",
+    "options": [
+      "podman run nginx",
+      "podman run -d nginx",
+      "podman run --background nginx",
+      "podman run -it nginx"
+    ],
+    "correct_index": 1,
+    "category": "devops",
+    "explanation": "podman run -d (detach) uruchamia kontener w tle. -it (interactive + tty) do terminala interaktywnego. Domyślnie (bez -d) kontener działa w foreground.",
+    "stage": 2,
+    "hint": "-d = detached (w tle). -it = interaktywny terminal. --rm = usuń po zatrzymaniu"
+  },
+  {
+    "id": 115,
+    "question": "Jaki port domyślnie używa iSCSI?",
+    "options": [
+      "3260",
+      "3306",
+      "2049",
+      "443"
+    ],
+    "correct_index": 0,
+    "category": "network",
+    "explanation": "iSCSI nasłuchuje na porcie 3260 (TCP). Port 2049 to NFS, 3306 to MySQL, 443 to HTTPS.",
+    "stage": 4,
+    "hint": "Zapamiętaj: iSCSI = 3260, NFS = 2049, SMB/CIFS = 445."
+  },
+  {
+    "id": 116,
+    "question": "Do czego służy Skopeo?",
+    "options": [
+      "Zarządzania obrazami kontenerów bez demona",
+      "Uruchamiania kontenerów",
+      "Budowania obrazów",
+      "Orkiestracji kontenerów"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Skopeo służy do inspekcji, kopiowania i przenoszenia obrazów kontenerów – bez uruchamiania demona.",
+    "stage": 5,
+    "hint": "Skopeo = zarządzanie obrazami, nie uruchamianie kontenerów."
+  },
+  {
+    "id": 117,
+    "question": "Czym Buildah różni się od Podman/Docker?",
+    "options": [
+      "Buduje obrazy bez uruchamiania demona",
+      "Tylko uruchamia kontenery",
+      "Jest szybszy w uruchamianiu kontenerów",
+      "Zarządza wolumenami"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Buildah buduje obrazy kontenerów bez demona i nie uruchamia kontenerów. Podman/Docker mogą budować i uruchamiać.",
+    "stage": 5,
+    "hint": "Buildah buduje obrazy. Podman je uruchamia. Razem zastępują Dockera w RHEL."
+  },
+  {
+    "id": 118,
+    "question": "Które narzędzie tworzy maszyny wirtualne KVM z CLI?",
+    "options": [
+      "virt-install",
+      "virsh create",
+      "qemu-create",
+      "kvm-install"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "virt-install tworzy VM. virsh zarządza istniejącymi. qemu-kvm to emulator.",
+    "stage": 4,
+    "hint": "virt-install = tworzy, virsh = zarządza, qemu-kvm = silnik."
+  },
+  {
+    "id": 119,
+    "question": "Co robi kdump po kernel panic?",
+    "options": [
+      "Uruchamia drugie jądro przez kexec i zapisuje vmcore",
+      "Restartuje system bez zapisu",
+      "Wysyła logi na serwer syslog",
+      "Zrzuca pamięć do swap"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "kexec uruchamia zapasowe jądro, które zapisuje vmcore do analizy narzędziem crash.",
+    "stage": 4,
+    "hint": "kdump = dwa jądra: pierwsze crashe, drugie zapisuje vmcore."
+  },
+  {
+    "id": 120,
+    "question": "Do czego służy VDO w RHEL?",
+    "options": [
+      "Deduplikacji i kompresji na poziomie blokowym",
+      "Tworzenia snapshotów LVM",
+      "Zarządzania maszynami wirtualnymi",
+      "Szyfrowania dysków"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "VDO to deduplikacja i kompresja blokowa – oszczędza miejsce na dysku w RHEL 9+.",
+    "stage": 4,
+    "hint": "VDO = deduplikacja + kompresja. Sprawdź vdostats."
+  },
+  {
+    "id": 121,
+    "question": "Jak włączyć konkretną wersję Nginx przez DNF modules?",
+    "options": [
+      "dnf module enable nginx:1.24",
+      "dnf install nginx-1.24",
+      "dnf versionlock nginx-1.24",
+      "dnf module-install nginx-1.24"
+    ],
+    "correct_index": 0,
+    "category": "linux",
+    "explanation": "dnf module enable nginx:1.24 włącza strumień, potem dnf install nginx.",
+    "stage": 3,
+    "hint": "dnf module enable {nazwa}:{wersja}"
+  },
+  {
+    "id": 122,
+    "question": "Które polecenie zmienia profil tuned?",
+    "options": [
+      "tuned-adm profile nazwa",
+      "tuned profile set nazwa",
+      "systemctl set-profile nazwa",
+      "tunectl set nazwa"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "tuned-adm profile nazwa przełącza profil. tuned-adm list pokazuje dostępne.",
+    "stage": 3,
+    "hint": "tuned-adm list → profile, tuned-adm active → bieżący, tuned-adm profile X → ustaw."
+  },
+  {
+    "id": 123,
+    "question": "Jak zmienić politykę kryptograficzną w RHEL?",
+    "options": [
+      "update-crypto-policies --set FUTURE",
+      "crypto-policy set FUTURE",
+      "set-crypto-policy FUTURE",
+      "systemctl set-crypto FUTURE"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "update-crypto-policies --set NAZWA zmienia globalną politykę szyfrowania.",
+    "stage": 4,
+    "hint": "update-crypto-policies --show (pokaż), --set NAZWA (ustaw)."
+  },
+  {
+    "id": 124,
+    "question": "Które narzędzie monitoruje Network Teaming?",
+    "options": [
+      "teamdctl",
+      "team-config",
+      "nmcli",
+      "Zarówno nmcli jak i teamdctl"
+    ],
+    "correct_index": 3,
+    "category": "network",
+    "explanation": "Stan teamu sprawdzasz przez teamdctl, konfigurację przez nmcli.",
+    "stage": 4,
+    "hint": "nmcli → konfiguracja, teamdctl → monitoring."
+  },
+  {
+    "id": 125,
+    "question": "Która opcja fstab zapobiega blokowaniu boota przy offline NFS?",
+    "options": [
+      "nofail",
+      "_netdev",
+      "defaults",
+      "noauto"
+    ],
+    "correct_index": 0,
+    "category": "system",
+    "explanation": "nofail – kontynuuj boot jeśli montowanie nie działa. _netdev czeka na sieć.",
+    "stage": 2,
+    "hint": "NFS: defaults,_netdev,nofail 0 0"
+  },
+  {
+    "id": 126,
+    "question": "Którego polecenia użyć do edycji sudoers?",
+    "options": [
+      "visudo",
+      "vim /etc/sudoers",
+      "nano /etc/sudoers",
+      "sudo-edit"
+    ],
+    "correct_index": 0,
+    "category": "security",
+    "explanation": "Zawsze visudo – blokada pliku + walidacja składni przed zapisem.",
+    "stage": 2,
+    "hint": "visudo (blokada + walidacja). Drop-in w /etc/sudoers.d/."
+  }
+]

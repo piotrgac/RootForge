@@ -1,7 +1,7 @@
 <script>
-  import { getCategoryInfo } from '$lib/categories.js';
-  import { commands, searchCommands, getCommandsByCategory, categories } from '$lib/cheatsheet.js';
-  import { resources, getCategoryResources } from '$lib/resources.js';
+  import { getCategoryInfo } from '$lib/categories';
+  import { commands, searchCommands, getCommandsByCategory, categories } from '$lib/cheatsheet';
+  import { resources, getCategoryResources } from '$lib/resources';
 
   let tab = $state('cheatsheet');
   let query = $state('');
@@ -86,9 +86,6 @@
 
 <style>
   .resources-page { max-width: 1000px; }
-  .page-header h1 { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
-  .page-header p { color: #64748b; margin-bottom: 20px; }
-
   .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: #1e293b; border-radius: 10px; padding: 4px; }
   .tab { flex: 1; padding: 10px; border: none; background: transparent; color: #94a3b8; cursor: pointer; border-radius: 8px; font-size: 14px; font-weight: 500; transition: all 0.15s; }
   .tab.active { background: #0ea5e9; color: #fff; }

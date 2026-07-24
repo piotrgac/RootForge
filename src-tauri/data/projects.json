@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "title": "Serwer plików z Samba/NFS",
+    "description": "Skonfiguruj serwer plików udostępniający katalogi w sieci lokalnej",
+    "guide": "1. Zainstaluj samba lub nfs-utils\n2. Skonfiguruj udziały w /etc/samba/smb.conf lub /etc/exports\n3. Ustaw uprawnienia i użytkowników\n4. Przetestuj montowanie z klienta\n5. Zabezpiecz firewall",
+    "github_repo": null,
+    "completed": false
+  },
+  {
+    "id": 2,
+    "title": "Monitoring serwera z Grafana",
+    "description": "Skonfiguruj monitoring serwera z Prometheus + Grafana",
+    "guide": "1. Zainstaluj Prometheus i node_exporter\n2. Skonfiguruj zbieranie metryk\n3. Zainstaluj i skonfiguruj Grafanę\n4. Stwórz dashboard z użyciem CPU, RAM, dysku, sieci\n5. Dodaj alerty",
+    "github_repo": null,
+    "completed": false
+  },
+  {
+    "id": 3,
+    "title": "Własny serwer DNS",
+    "description": "Postaw i skonfiguruj lokalny serwer DNS z blokowaniem reklam",
+    "guide": "1. Wybierz: BIND, dnsmasq lub Pi-hole\n2. Skonfiguruj strefy i przekierowania\n3. Włącz blokowanie domen\n4. Przetestuj rozwiązywanie nazw\n5. Dodaj klientów do serwera DNS",
+    "github_repo": null,
+    "completed": false
+  },
+  {
+    "id": 4,
+    "title": "Automatyzacja backupu",
+    "description": "Stwórz system automatycznego backupu z rotacją i powiadomieniami",
+    "guide": "1. Napisz skrypt backupu (rsync/tar)\n2. Dodaj rotację (np. daily/weekly/monthly)\n3. Wyślij powiadomienie email/ntfy\n4. Dodaj cron job\n5. Przetestuj odtwarzanie z backupu",
+    "github_repo": null,
+    "completed": false
+  },
+  {
+    "id": 5,
+    "title": "Dockerized Web Stack",
+    "description": "Postaw stos WWW (Nginx + PHP + PostgreSQL) w Dockerze z docker-compose",
+    "guide": "1. Stwórz docker-compose.yml\n2. Skonfiguruj Nginx jako reverse proxy\n3. Dodaj PHP-FPM\n4. Skonfiguruj PostgreSQL\n5. Dodaj wolumeny i sieci\n6. Uruchom i przetestuj",
+    "github_repo": null,
+    "completed": false
+  },
+  {
+    "id": 6,
+    "title": "Konfiguracja serwera pocztowego",
+    "description": "Skonfiguruj serwer pocztowy (Postfix + Dovecot) z szyfrowaniem",
+    "guide": "1. Zainstaluj Postfix i Dovecot\n2. Skonfiguruj domenę i certyfikaty SSL\n3. Utwórz konta pocztowe\n4. Skonfiguruj SPF, DKIM, DMARC\n5. Przetestuj wysyłanie i odbieranie",
+    "github_repo": null,
+    "completed": false
+  },
+  {
+    "id": 7,
+    "title": "Serwer VPN z WireGuard",
+    "description": "Postaw własny serwer VPN WireGuard z konfiguracją klientów i routingiem",
+    "guide": "1. Zainstaluj WireGuard\n2. Wygeneruj klucze serwera i klientów\n3. Skonfiguruj interfejs wg0\n4. Dodaj reguły iptables/firewalld do NAT\n5. Skonfiguruj klientów (peer)\n6. Przetestuj połączenie i routing",
+    "github_repo": null,
+    "completed": false
+  },
+  {
+    "id": 8,
+    "title": "System monitoringu Icinga/Nagios",
+    "description": "Skonfiguruj monitoring całej infrastruktury z alertami i dashboardem",
+    "guide": "1. Zainstaluj Icinga2 lub Nagios Core\n2. Skonfiguruj hosty i serwisy do monitorowania\n3. Dodaj sprawdzenia: ping, HTTP, SSH, disk, CPU\n4. Skonfiguruj powiadomienia email/ntfy\n5. Dodaj graficzne raporty (PNP4Nagios/Icingaweb2)\n6. Przetestuj alerty",
+    "github_repo": null,
+    "completed": false
+  },
+  {
+    "id": 9,
+    "title": "Automatyzacja deploymentu z Ansible",
+    "description": "Napisz playbook Ansible do pełnego deploymentu aplikacji webowej",
+    "guide": "1. Stwórz inventory (hosts.ini)\n2. Napisz playbook: instalacja Nginx + certbot\n3. Deployment aplikacji przez git clone\n4. Dodaj zmienne i szablony (Jinja2)\n5. Zabezpiecz hasła Ansible Vaultem\n6. Uruchom na zdalnym serwerze",
+    "github_repo": null,
+    "completed": false
+  },
+  {
+    "id": 10,
+    "title": "Klaster Kubernetes z k3s",
+    "description": "Postaw klaster Kubernetes na kilku VPS-ach lub maszynach wirtualnych",
+    "guide": "1. Zainstaluj k3s na serwerze głównym\n2. Dodaj agentów (worker nodes)\n3. Skonfiguruj kubectl i połącz się\n4. Wdróż przykładową aplikację z deployment + service\n5. Dodaj Ingress (Traefik)\n6. Skonfiguruj PersistentVolume\n7. Przetestuj skalowanie",
+    "github_repo": null,
+    "completed": false
+  }
+]

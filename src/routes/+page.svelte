@@ -1,7 +1,7 @@
 <script>
   import { invoke } from '@tauri-apps/api/core';
   import { onMount } from 'svelte';
-  import { getCategoryStats } from '$lib/categories.js';
+  import { getCategoryStats } from '$lib/categories';
 
   let data = $state(null);
   let loading = $state(true);
@@ -24,6 +24,17 @@
   let projectsTotal = $derived(data?.projects?.length || 0);
   let quizzesDone = $derived(data?.quiz_results?.length || 0);
   let catStats = $derived(getCategoryStats(challenges));
+  let stageProgress = $derived.by(() => {
+    const byStage = {};
+    for (const ch of challenges) {
+      const s = ch.stage || 0;
+      if (s === 0) continue;
+      if (!byStage[s]) byStage[s] = { stage: s, total: 0, done: 0 };
+      byStage[s].total++;
+      if (ch.completed) byStage[s].done++;
+    }
+    return Object.values(byStage).sort((a, b) => a.stage - b.stage);
+  });
   let sessions = $derived(data?.sessions || []);
   let dailyGoal = $derived(data?.daily_goal_minutes || 30);
   let todaySessions = $derived.by(() => {
@@ -105,6 +116,23 @@
       </div>
     </div>
 
+    {#if data?.achievements?.length}
+      <div class="achievements-section">
+        <h2>🏆 Osiągnięcia</h2>
+        <div class="achievement-grid">
+          {#each data.achievements as ach}
+            <div class="achievement" class:unlocked={ach.unlocked} class:locked={!ach.unlocked}>
+              <span class="ach-icon">{ach.unlocked ? ach.icon : '🔒'}</span>
+              <div class="ach-info">
+                <span class="ach-title">{ach.title}</span>
+                <span class="ach-desc">{ach.description}</span>
+              </div>
+            </div>
+          {/each}
+        </div>
+      </div>
+    {/if}
+
     <div class="progress-section">
       <h2>Ogólny postęp</h2>
       <div class="progress-bar-container">
@@ -112,6 +140,26 @@
         <span class="progress-text">{progress}%</span>
       </div>
     </div>
+
+    {#if stageProgress.length > 0}
+      <div class="stage-section">
+        <h2>Postęp według etapów</h2>
+        <div class="stage-grid">
+          {#each stageProgress as sp}
+            <div class="stage-card">
+              <div class="stage-header">
+                <span class="stage-badge">Etap {sp.stage}</span>
+                <span class="stage-pct">{Math.round(sp.done / sp.total * 100)}%</span>
+              </div>
+              <div class="stage-bar-bg">
+                <div class="stage-bar-fill" style="width: {sp.done / sp.total * 100}%"></div>
+              </div>
+              <span class="stage-count">{sp.done}/{sp.total} wyzwań</span>
+            </div>
+          {/each}
+        </div>
+      </div>
+    {/if}
 
     <div class="category-breakdown">
       <h2>Postęp według kategorii</h2>
@@ -136,23 +184,6 @@
 <style>
   .dashboard {
     max-width: 1000px;
-  }
-
-  .page-header h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #f1f5f9;
-    margin-bottom: 4px;
-  }
-
-  .page-header p {
-    color: #64748b;
-    margin-bottom: 24px;
-  }
-
-  .loading {
-    color: #64748b;
-    font-size: 16px;
   }
 
   .study-plan { margin-bottom: 28px; }
@@ -202,6 +233,17 @@
     color: #64748b;
   }
 
+  .achievements-section { margin-bottom: 28px; }
+  .achievements-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #e2e8f0; }
+  .achievement-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+  .achievement { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #1e293b; border: 1px solid #334155; border-radius: 10px; transition: all 0.2s; }
+  .achievement.unlocked { border-color: #7c3aed; background: #7c3aed10; }
+  .achievement.locked { opacity: 0.5; }
+  .ach-icon { font-size: 24px; min-width: 32px; text-align: center; }
+  .ach-info { flex: 1; }
+  .ach-title { display: block; font-size: 13px; font-weight: 600; color: #f1f5f9; }
+  .ach-desc { display: block; font-size: 11px; color: #64748b; }
+
   .progress-section {
     margin-bottom: 28px;
   }
@@ -238,6 +280,17 @@
     font-weight: 600;
     color: #f1f5f9;
   }
+
+  .stage-section { margin-bottom: 28px; }
+  .stage-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #e2e8f0; }
+  .stage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .stage-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; }
+  .stage-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .stage-badge { font-size: 12px; font-weight: 700; background: #7c3aed20; color: #a78bfa; padding: 3px 10px; border-radius: 5px; }
+  .stage-pct { font-size: 16px; font-weight: 700; color: #38bdf8; }
+  .stage-bar-bg { height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
+  .stage-bar-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #a78bfa); border-radius: 4px; transition: width 0.5s ease; }
+  .stage-count { font-size: 12px; color: #64748b; }
 
   .category-breakdown h2 {
     font-size: 18px;

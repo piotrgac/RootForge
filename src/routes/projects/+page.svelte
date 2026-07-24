@@ -96,20 +96,6 @@
 <style>
   .projects-page { max-width: 800px; }
 
-  .page-header h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #f1f5f9;
-    margin-bottom: 4px;
-  }
-
-  .page-header p {
-    color: #64748b;
-    margin-bottom: 24px;
-  }
-
-  .loading { color: #64748b; }
-
   .project-list { display: flex; flex-direction: column; gap: 16px; }
 
   .project-card {

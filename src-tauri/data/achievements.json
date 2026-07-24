@@ -1,0 +1,17 @@
+[
+  {"id": 1, "title": "Pierwsze kroki", "description": "Ukończ pierwsze wyzwanie", "icon": "👶", "unlocked": false},
+  {"id": 2, "title": "Dziesięcioro przykazań", "description": "Ukończ 10 wyzwań", "icon": "📜", "unlocked": false},
+  {"id": 3, "title": "W połowie drogi", "description": "Ukończ 36 wyzwań", "icon": "🏔️", "unlocked": false},
+  {"id": 4, "title": "Weteran", "description": "Ukończ wszystkie 72 wyzwania", "icon": "🏅", "unlocked": false},
+  {"id": 5, "title": "Budowniczy", "description": "Ukończ pierwszy projekt", "icon": "🔨", "unlocked": false},
+  {"id": 6, "title": "Architekt", "description": "Ukończ wszystkie projekty", "icon": "🏛️", "unlocked": false},
+  {"id": 7, "title": "Perfekcjonista", "description": "Rozwiąż sesję quizu z 100% poprawnych", "icon": "💯", "unlocked": false},
+  {"id": 8, "title": "Tygodniowa passa", "description": "Ucz się przez 7 dni z rzędu", "icon": "🔥", "unlocked": false},
+  {"id": 9, "title": "Mistrz quizu", "description": "Zdobądź 50 poprawnych odpowiedzi w quizie", "icon": "🧠", "unlocked": false},
+  {"id": 10, "title": "Zbieracz XP", "description": "Zdobądź 1000 punktów doświadczenia", "icon": "⚡", "unlocked": false},
+  {"id": 11, "title": "Poziom 5", "description": "Osiągnij poziom 5", "icon": "⭐", "unlocked": false},
+  {"id": 12, "title": "Szybki jak błyskawica", "description": "Rozwiąż Speed Challenge poniżej 5 sekund", "icon": "⚡", "unlocked": false},
+  {"id": 13, "title": "Mistrz terminala", "description": "Ukończ 20 zadań w Speed Challenge", "icon": "💻", "unlocked": false},
+  {"id": 14, "title": "Egzaminowany", "description": "Zalicz pierwszy egzamin RHCSA (mock)", "icon": "📝", "unlocked": false},
+  {"id": 15, "title": "Niestrudzony", "description": "Zaloguj 10 godzin nauki", "icon": "⏱️", "unlocked": false}
+]
