@@ -4,6 +4,16 @@
   let { children } = $props();
   let sidebarOpen = $state(true);
 
+  function toggleSidebar() { sidebarOpen = !sidebarOpen; }
+
+  $effect(() => {
+    function handler(e) {
+      if (e.ctrlKey && e.key === 'b') { e.preventDefault(); toggleSidebar(); }
+    }
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  });
+
   const navItems = [
     { href: '/', label: 'Dashboard', icon: '📊' },
     { href: '/career', label: 'Kariera', icon: '🚀' },
@@ -34,7 +44,7 @@
     <div class="sidebar-header">
       <h1 class="logo" class:small={!sidebarOpen}>CP</h1>
       <span class="sidebar-title" class:hidden={!sidebarOpen}>RootForge</span>
-      <button class="toggle-btn" onclick={() => sidebarOpen = !sidebarOpen}>
+      <button class="toggle-btn" onclick={toggleSidebar} title="Przełącz sidebar (Ctrl+B)">
         {sidebarOpen ? '◀' : '▶'}
       </button>
     </div>
@@ -45,7 +55,7 @@
           class="nav-item"
           class:active={$page.url.pathname === item.href}
         >
-          <span class="nav-icon">{item.icon}</span>
+          <span class="nav-icon" title={item.label}>{item.icon}</span>
           <span class="nav-label" class:hidden={!sidebarOpen}>{item.label}</span>
         </a>
       {/each}

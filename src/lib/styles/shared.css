@@ -20,6 +20,44 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
+/* Desktop-native scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* Selection styling */
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Smooth scrolling on all pages */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Native focus ring */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Cursor pointer on all interactive elements */
+button, a, select, input[type="submit"], input[type="checkbox"], input[type="radio"], summary {
+  cursor: pointer;
+}
+
 .page-header h1 {
   font-size: 28px;
   font-weight: 700;
