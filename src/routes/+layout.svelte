@@ -6,6 +6,7 @@
 
   const navItems = [
     { href: '/', label: 'Dashboard', icon: '📊' },
+    { href: '/career', label: 'Kariera', icon: '🚀' },
     { href: '/challenges', label: 'Wyzwania', icon: '🎯' },
     { href: '/milestones', label: 'Kamienie milowe', icon: '🏆' },
     { href: '/projects', label: 'Projekty', icon: '💻' },

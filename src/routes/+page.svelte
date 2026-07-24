@@ -89,6 +89,30 @@
 
   {#if loading}
     <div class="loading">Ładowanie...</div>
+  {:else if !data?.challenges?.some(c => c.completed) && !data?.quiz_results?.length}
+    <!-- First-time user welcome -->
+    <div class="welcome-card card">
+      <div class="welcome-icon">🐧</div>
+      <h2>Witaj w RootForge!</h2>
+      <p>Oto jak zacząć swoją przygodę z Linuxem:</p>
+      <div class="welcome-steps">
+        <a href="/challenges" class="welcome-step">
+          <span class="ws-num">1</span>
+          <span class="ws-title">Wyzwania</span>
+          <span class="ws-desc">Zacznij od pierwszego wyzwania – nauczysz się podstaw terminala</span>
+        </a>
+        <a href="/quiz" class="welcome-step">
+          <span class="ws-num">2</span>
+          <span class="ws-title">Quiz</span>
+          <span class="ws-desc">Sprawdź wiedzę w quizie, ustaw poziom pewności</span>
+        </a>
+        <a href="/career" class="welcome-step">
+          <span class="ws-num">3</span>
+          <span class="ws-title">Ścieżka kariery</span>
+          <span class="ws-desc">Zobacz swoją drogę od juniora do senior Linux Admina</span>
+        </a>
+      </div>
+    </div>
   {:else}
     <div class="study-plan">
       <h2>📅 Plan na dziś</h2>
@@ -307,6 +331,17 @@
   .plan-tip { font-size: 13px; color: #94a3b8; }
   .plan-tip a { color: #38bdf8; text-decoration: none; font-weight: 600; }
   .plan-tip a:hover { text-decoration: underline; }
+
+  .welcome-card { text-align: center; padding: 32px; margin-bottom: 24px; }
+  .welcome-icon { font-size: 64px; margin-bottom: 16px; }
+  .welcome-card h2 { font-size: 24px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+  .welcome-card > p { color: #64748b; font-size: 14px; margin-bottom: 20px; }
+  .welcome-steps { display: flex; flex-direction: column; gap: 10px; max-width: 500px; margin: 0 auto; }
+  .welcome-step { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #0f172a; border: 1px solid #334155; border-radius: 12px; text-decoration: none; transition: all 0.15s; }
+  .welcome-step:hover { border-color: #0ea5e9; background: #1a2332; }
+  .ws-num { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #0ea5e9; color: #fff; border-radius: 50%; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+  .ws-title { display: block; font-size: 15px; font-weight: 600; color: #f1f5f9; }
+  .ws-desc { display: block; font-size: 12px; color: #64748b; }
 
   .stats-grid {
     display: grid;
