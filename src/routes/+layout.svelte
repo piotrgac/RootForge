@@ -147,6 +147,8 @@
     gap: 4px;
     padding: 12px 8px;
     flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .nav-item {
