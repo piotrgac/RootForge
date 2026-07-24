@@ -2263,5 +2263,305 @@
     "explanation": "dnf module enable nginx:1.24 włącza strumień. Potem dnf install nginx instaluje z tego strumienia.",
     "stage": 3,
     "hint": null
+  },
+  {
+    "id": 152,
+    "question": "Ktora warstwa w Dockerfile powinna byc optymalizowana jako pierwsza?",
+    "options": [
+      "Te, ktore zmieniaja sie najrzadziej",
+      "Te, ktore zmieniaja sie najczesciej",
+      "Wszystkie naraz",
+      "Ostatnia warstwa"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Optymalizacja: najpierw mniej zmienne warstwy (system, zaleznosci), potem kod. To maksymalizuje cache.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 153,
+    "question": "Jaka jest roznica miedzy CMD a ENTRYPOINT w Dockerfile?",
+    "options": [
+      "ENTRYPOINT to podstawa, CMD to domyslne argumenty",
+      "CMD uruchamia kontener, ENTRYPOINT buduje obraz",
+      "Nie ma roznicy",
+      "CMD jest wymagane, ENTRYPOINT opcjonalny"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "ENTRYPOINT definiuje wykonywalny program, CMD podaje domyslne argumenty. User moze nadpisac CMD, ale nie ENTRYPOINT bez --entrypoint.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 154,
+    "question": "Jaka siec Docker jest domyslnie uzywana dla kontenerow?",
+    "options": [
+      "bridge",
+      "host",
+      "overlay",
+      "none"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Domyslna siec to bridge. Kazdy kontener dostaje prywatny IP. Do komunikacji miedzy hostami: overlay.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 155,
+    "question": "Ktory plik definiuje multi-kontenerowa aplikacje Docker?",
+    "options": [
+      "docker-compose.yml",
+      "Dockerfile",
+      "Containerfile",
+      "compose.yaml"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "docker-compose.yml (lub compose.yaml) definiuje serwisy, sieci i wolumeny.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 156,
+    "question": "Jaka flaga w docker run usuwa kontener po zakonczeniu?",
+    "options": [
+      "--rm",
+      "--remove",
+      "--clean",
+      "--delete"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "--rm automatycznie usuwa kontener gdy sie zakonczy. Idealne do testow.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 157,
+    "question": "Jaki jest najmniejszy obiekt w Kubernetes?",
+    "options": [
+      "Pod",
+      "Container",
+      "Deployment",
+      "Service"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Pod to najmniejsza jednostka w K8s. Moze zawierac jeden lub wiecej kontenerow.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 158,
+    "question": "Ktory obiekt K8s zapewnia stabilny adres IP dla zbioru Podow?",
+    "options": [
+      "Service",
+      "Deployment",
+      "Ingress",
+      "ConfigMap"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Service zapewnia stabilny endpoint (ClusterIP/NodePort/LoadBalancer) do kommunikacji z Podami.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 159,
+    "question": "Ktore polecenie skaluje Deployment do 3 replik?",
+    "options": [
+      "kubectl scale deployment myapp --replicas=3",
+      "kubectl replicas myapp 3",
+      "kubectl autoscale myapp",
+      "kubectl set replicas myapp 3"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "kubectl scale deployment myapp --replicas=3 zmienia liczbe replik.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 160,
+    "question": "Jaki jest cel Ingress w K8s?",
+    "options": [
+      "Routing HTTP/HTTPS do uslug",
+      "Zarzadzanie storage",
+      "Autoryzacja uzytkownikow",
+      "Monitoring metryk"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Ingress routeruje ruch HTTP/HTTPS zewnatrz klastra do wewnetrznych Service.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 161,
+    "question": "Ktory obiekt przechowuje poufne dane w K8s (base64)?",
+    "options": [
+      "Secret",
+      "ConfigMap",
+      "Environment",
+      "Volume"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Secret przechowuje poufne dane (hasla, klucze) zakodowane w base64.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 162,
+    "question": "Ktore polecenie laczy zmiany z innej galezi przez utworzenie nowego commitu?",
+    "options": [
+      "git merge",
+      "git rebase",
+      "git cherry-pick",
+      "git pull"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "git merge tworzy nowy commit laczacy dwie galezie. git rebase przepisuje historie.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 163,
+    "question": "Ktore polecenie cofa ostatniego commita ZACHOWUJAC zmiany w roboczym katalogu?",
+    "options": [
+      "git reset --soft HEAD~1",
+      "git reset --hard HEAD~1",
+      "git revert HEAD",
+      "git checkout HEAD~1"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "git reset --soft HEAD~1 cofa commita ale zachowuje zmiany. --hard usuwa wszystko.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 164,
+    "question": "Ktore narzedzie sluzy do tymczasowego odlozenia zmian w Git?",
+    "options": [
+      "git stash",
+      "git shelf",
+      "git hold",
+      "git store"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "git stash odklada zmiany na stos. Potem mozesz je przywrocic przez git stash pop.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 165,
+    "question": "Jaki jest cel pull requesta w GitHub Flow?",
+    "options": [
+      "Code review przed mergem",
+      "Automatyczny deploy",
+      "Tworzenie releasu",
+      "Backup kodu"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Pull request sluzy do code review i dyskusji przed wlaczeniem zmian do maina.",
+    "stage": 6,
+    "hint": null
+  },
+  {
+    "id": 166,
+    "question": "Ktory plik definiuje pipeline w GitHub Actions?",
+    "options": [
+      ".github/workflows/*.yml",
+      ".github/actions.yml",
+      "pipeline.yml",
+      "workflow.yaml"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "GitHub Actions czyta pliki YAML z .github/workflows/ kazdy to osobny workflow.",
+    "stage": 7,
+    "hint": null
+  },
+  {
+    "id": 167,
+    "question": "Jaka strategia deploymentu uruchamia DWA srodowiska naraz i przelacza miedzy nimi?",
+    "options": [
+      "Blue-green",
+      "Rolling update",
+      "Canary",
+      "Recreate"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Blue-green: dwa srodowiska (stary=blue, nowy=green). Po testach przelaczasz Service na green.",
+    "stage": 7,
+    "hint": null
+  },
+  {
+    "id": 168,
+    "question": "Gdzie Terraform przechowuje stan infrastruktury?",
+    "options": [
+      "W pliku terraform.tfstate",
+      "W main.tf",
+      "W variables.tf",
+      "W providers.tf"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "terraform.tfstate przechowuje aktualny stan zarzadzanej infrastruktury.",
+    "stage": 7,
+    "hint": null
+  },
+  {
+    "id": 169,
+    "question": "Ktore polecenie pokazuje zmiany ktore Terraform wprowadzi?",
+    "options": [
+      "terraform plan",
+      "terraform apply",
+      "terraform show",
+      "terraform validate"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "terraform plan pokazuje co zostanie stworzone/zmienione/usuniete bez wykonywania zmian.",
+    "stage": 7,
+    "hint": null
+  },
+  {
+    "id": 170,
+    "question": "Ktora usluga AWS sluzy do przechowywania obiektow?",
+    "options": [
+      "S3",
+      "EC2",
+      "RDS",
+      "Lambda"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "Amazon S3 (Simple Storage Service) przechowuje dane jako obiekty w bucketach.",
+    "stage": 7,
+    "hint": null
+  },
+  {
+    "id": 171,
+    "question": "Ktora usluga AWS uruchamia kod bez serwera (serverless)?",
+    "options": [
+      "Lambda",
+      "EC2",
+      "ECS",
+      "EKS"
+    ],
+    "correct_index": 0,
+    "category": "devops",
+    "explanation": "AWS Lambda uruchamia kod w odpowiedzi na zdarzenia, bez zarzadzania serwerami.",
+    "stage": 7,
+    "hint": null
   }
 ]

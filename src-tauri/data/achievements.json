@@ -124,5 +124,40 @@
     "description": "Ukończ poziom 5 w Vim Master",
     "icon": "⚡",
     "unlocked": false
+  },
+  {
+    "id": 19,
+    "title": "Git Init",
+    "description": "Ukocz 5 wyzwan Git",
+    "icon": "📦",
+    "unlocked": false
+  },
+  {
+    "id": 20,
+    "title": "Docker Captain",
+    "description": "Ukocz 10 wyzwan Docker",
+    "icon": "🐳",
+    "unlocked": false
+  },
+  {
+    "id": 21,
+    "title": "K8s Explorer",
+    "description": "Ukocz 10 wyzwan Kubernetes",
+    "icon": "☸️",
+    "unlocked": false
+  },
+  {
+    "id": 22,
+    "title": "Cloud Practitioner",
+    "description": "Ukocz 10 wyzwan Cloud",
+    "icon": "☁️",
+    "unlocked": false
+  },
+  {
+    "id": 23,
+    "title": "DevOps Engineer",
+    "description": "Ukocz 30 wyzwan DevOps (stage >= 6)",
+    "icon": "🔧",
+    "unlocked": false
   }
 ]
